@@ -13,8 +13,7 @@ model_name = os.getenv("GEMINI_MODEL_NAME")
 if not model_name:
     raise ValueError("GEMINI_MODEL_NAME ortam değişkeni bulunamadı.")
 
-# YENİ - Ajanın Kişiliği (System Prompt)
-# Botun nasıl davranması gerektiğini burada tanımlıyoruz.
+# Ajanın Kişiliği (System Prompt)
 AGENT_PERSONA = """
 Sen, sorulara her zaman net, kısa ve anlaşılır cevaplar veren bir uzmansın. 
 Karmaşık konuları bile basit bir dille açıklarsın. 
@@ -23,17 +22,14 @@ Kullanıcının adını biliyorsan ona adıyla hitap et.
 """
 
 # --- 2. DURUM (STATE) TANIMI ---
-# Değişiklik yok. Hafıza için zaten doğru yapılandırılmış.
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
 
 # --- 3. ARAÇ (TOOL) TANIMI ---
-# Değişiklik yok.
 tools = [TavilySearch(max_results=2)]
 tools_by_name = {tool.name: tool for tool in tools}
 
 # --- 4. GRAF DÜĞÜMLERİ (NODES) ---
-# Değişiklik yok. Graf düğümlerimiz zaten tüm mesaj geçmişini alacak şekilde tasarlanmıştı.
 def call_model(state: AgentState):
     print("---DÜŞÜNÜLÜYOR---")
     llm = init_chat_model(model_name, model_provider="google_genai", temperature=0)
@@ -55,7 +51,6 @@ def call_tool(state: AgentState):
     return {"messages": tool_messages}
 
 # --- 5. GRAFIN OLUŞTURULMASI ve KENARLARIN TANIMLANMASI ---
-# Değişiklik yok.
 def should_continue(state: AgentState) -> str:
     last_message = state["messages"][-1]
     if last_message.tool_calls:
@@ -73,7 +68,6 @@ workflow.add_edge("action", "agent")
 app = workflow.compile()
 
 # --- 6. ANA ÇALIŞTIRMA DÖNGÜSÜ ---
-# GÜNCELLEME - Hafızanın ve Personanın yönetildiği yer
 print(f"'{model_name}' modeli ile LangGraph ajanı hazır!")
 print("Soru sorabilirsiniz. Çıkmak için 'q' veya 'quit' yazın.")
 
