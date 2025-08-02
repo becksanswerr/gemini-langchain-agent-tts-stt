@@ -1,3 +1,5 @@
+# main.py - TEMİZ ve DOĞRU VERSİYON
+
 import os
 import operator
 from dotenv import load_dotenv
