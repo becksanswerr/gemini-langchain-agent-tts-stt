@@ -38,7 +38,6 @@ def human_approval_node(state: AgentState):
     last_message = state["messages"][-1]
     tool_call = last_message.tool_calls[0]
     
-    # Kullanıcıya ne yapılacağını sor
     prompt = (
         f"Ajan şu eylemi gerçekleştirmek istiyor:\n"
         f"ARAÇ: {tool_call['name']}\n"
@@ -49,16 +48,13 @@ def human_approval_node(state: AgentState):
     response = input(prompt).lower().strip()
     
     if response == "evet":
-        # Onaylandıysa, aracın çalıştırılması için aracı ve parametreleri döndür
         return {"messages": [AIMessage(content="Kullanıcı eylemi onayladı.")]}
     else:
-        # Onaylanmadıysa, ajana durumu bildir
         return {"messages": [AIMessage(content="Kullanıcı eylemi reddetti. Durumu kullanıcıya bildir.")]}
 
 
 def call_tool(state: AgentState):
     print("---ARAÇ KULLANILIYOR---")
-    # Onaydan sonraki mesajı değil, orijinal araç çağıran mesajı bul
     tool_call_message = next(msg for msg in reversed(state['messages']) if msg.tool_calls)
     
     tool_messages = []
@@ -77,10 +73,9 @@ def should_continue(state: AgentState) -> str:
     if not last_message.tool_calls:
         return "end"
     
-    # Eğer gönderim aracıysa, insan onayına git
     if last_message.tool_calls[0]["name"] == "send_message":
         return "human_approval"
-    else: # Diğer tüm araçlar için direkt çalıştır
+    else:
         return "action"
     
 def after_approval(state: AgentState) -> str:
@@ -88,7 +83,7 @@ def after_approval(state: AgentState) -> str:
     if "Kullanıcı eylemi onayladı." in last_message.content:
         return "action"
     else:
-        return "end"
+        return "agent"
 
 workflow = StateGraph(AgentState)
 workflow.add_node("agent", call_model)
@@ -113,14 +108,8 @@ def simulate_live_notification(sender: str, message: str):
     print("="*40 + "\n")
     time.sleep(1)
 
-# main.py dosyasının sadece son bölümü
-
-# ... (kodun geri kalanı aynı) ...
-
-# Simülasyonu başlat
 simulate_live_notification("Ecem", "bu gun napicaksin")
 
-# GÜNCELLEME: Ajanı bir komutla değil, bir durum raporuyla tetikliyoruz.
 initial_prompt = """
 GELEN OLAY: Ecem adlı kişiden yeni bir mesaj alındı.
 MESAJ İÇERİĞİ: "bu gun napicaksin"
@@ -132,7 +121,6 @@ conversation_history = [
     HumanMessage(content=initial_prompt)
 ]
 
-# Grafı çalıştır
 print("--- AJAN TETİKLENDİ ---")
 inputs = {"messages": conversation_history}
 
