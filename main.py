@@ -1,39 +1,145 @@
 import os
+import operator
+import time
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
+from typing import TypedDict, Annotated, Sequence
 
-# Proje başlangıcında .env dosyasındaki değişkenleri yükle
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMessage
+from langchain.chat_models import init_chat_model
+from langgraph.graph import StateGraph, END
+
+# Yerel dosyalardan importlar
+from config import AGENT_PERSONA
+from tools.custom_tools import read_todo_list, send_message
+
+# --- 1. KURULUM ve AYARLAR ---
 load_dotenv()
-
-# Ortam değişkenlerinden API anahtarını ve model adını güvenli bir şekilde al
-api_key = os.getenv("GOOGLE_API_KEY")
 model_name = os.getenv("GEMINI_MODEL_NAME")
 
-# API anahtarının yüklenip yüklenmediğini kontrol et
-if not api_key:
-    raise ValueError("GOOGLE_API_KEY ortam değişkeni bulunamadı. Lütfen .env dosyanızı kontrol edin.")
+# --- 2. DURUM (STATE) TANIMI ---
+class AgentState(TypedDict):
+    messages: Annotated[Sequence[BaseMessage], operator.add]
 
-# Model adı yoksa varsayılan bir model kullan
-if not model_name:
-    model_name = "gemini-pro"
-    print("GEMINI_MODEL_NAME bulunamadı. Varsayılan olarak 'gemini-pro' kullanılacak.")
+# --- 3. ARAÇLARIN BİRLEŞTİRİLMESİ ---
+tools = [read_todo_list, send_message]
+tools_by_name = {tool.name: tool for tool in tools}
 
-try:
-    # Modeli .env'den okuduğumuz bilgilerle başlat
-    llm = ChatGoogleGenerativeAI(model=model_name)
+# --- 4. GRAF DÜĞÜMLERİ (NODES) ---
 
-    print(f"'{model_name}' modeli başarıyla yüklendi. Bota mesajınızı yazabilirsiniz.")
-    print("Çıkmak için 'q' veya 'quit' yazın.")
+def call_model(state: AgentState):
+    print("---DÜŞÜNÜLÜYOR---")
+    llm = init_chat_model(model_name, model_provider="google_genai", temperature=0)
+    llm_with_tools = llm.bind_tools(tools)
+    response = llm_with_tools.invoke(state["messages"])
+    return {"messages": [response]}
 
-    while True:
-        user_input = input("Siz: ")
-        if user_input.lower() in ["q", "quit"]:
-            print("Bot kapatılıyor. Hoşça kalın!")
-            break
+def human_approval_node(state: AgentState):
+    print("---İNSAN ONAYI BEKLENİYOR---")
+    last_message = state["messages"][-1]
+    tool_call = last_message.tool_calls[0]
+    
+    # Kullanıcıya ne yapılacağını sor
+    prompt = (
+        f"Ajan şu eylemi gerçekleştirmek istiyor:\n"
+        f"ARAÇ: {tool_call['name']}\n"
+        f"PARAMETRELER: {tool_call['args']}\n"
+        f"Onaylıyor musunuz? (evet/hayir): "
+    )
+    
+    response = input(prompt).lower().strip()
+    
+    if response == "evet":
+        # Onaylandıysa, aracın çalıştırılması için aracı ve parametreleri döndür
+        return {"messages": [AIMessage(content="Kullanıcı eylemi onayladı.")]}
+    else:
+        # Onaylanmadıysa, ajana durumu bildir
+        return {"messages": [AIMessage(content="Kullanıcı eylemi reddetti. Durumu kullanıcıya bildir.")]}
 
-        # Modeli çağır ve yanıtı al
-        response = llm.invoke(user_input)
-        print(f"Bot: {response.content}")
 
-except Exception as e:
-    print(f"Bir hata oluştu: {e}")
+def call_tool(state: AgentState):
+    print("---ARAÇ KULLANILIYOR---")
+    # Onaydan sonraki mesajı değil, orijinal araç çağıran mesajı bul
+    tool_call_message = next(msg for msg in reversed(state['messages']) if msg.tool_calls)
+    
+    tool_messages = []
+    for tool_call in tool_call_message.tool_calls:
+        tool = tools_by_name[tool_call["name"]]
+        print(f"Araç çağrısı: {tool.name} with args {tool_call['args']}")
+        observation = tool.invoke(tool_call['args'])
+        tool_messages.append(ToolMessage(content=str(observation), tool_call_id=tool_call["id"]))
+        
+    return {"messages": tool_messages}
+
+# --- 5. GRAFIN OLUŞTURULMASI ve KENARLARIN TANIMLANMASI ---
+
+def should_continue(state: AgentState) -> str:
+    last_message = state["messages"][-1]
+    if not last_message.tool_calls:
+        return "end"
+    
+    # Eğer gönderim aracıysa, insan onayına git
+    if last_message.tool_calls[0]["name"] == "send_message":
+        return "human_approval"
+    else: # Diğer tüm araçlar için direkt çalıştır
+        return "action"
+    
+def after_approval(state: AgentState) -> str:
+    last_message = state['messages'][-1]
+    if "Kullanıcı eylemi onayladı." in last_message.content:
+        return "action"
+    else:
+        return "end"
+
+workflow = StateGraph(AgentState)
+workflow.add_node("agent", call_model)
+workflow.add_node("human_approval", human_approval_node)
+workflow.add_node("action", call_tool)
+
+workflow.set_entry_point("agent")
+workflow.add_conditional_edges("agent", should_continue, {"human_approval": "human_approval", "action": "action", "end": END})
+workflow.add_conditional_edges("human_approval", after_approval, {"action": "action", "end": "agent"})
+workflow.add_edge("action", "agent")
+
+app = workflow.compile()
+
+# --- 6. SİMÜLASYON BAŞLANGICI ---
+def simulate_live_notification(sender: str, message: str):
+    print("\n" + "="*40)
+    print("🔔 YENİ BİLDİRİM 🔔")
+    print("="*40)
+    time.sleep(1)
+    print(f"Gönderen: {sender}")
+    print(f"Mesaj: {message}")
+    print("="*40 + "\n")
+    time.sleep(1)
+
+# main.py dosyasının sadece son bölümü
+
+# ... (kodun geri kalanı aynı) ...
+
+# Simülasyonu başlat
+simulate_live_notification("Ecem", "bu gun napicaksin")
+
+# GÜNCELLEME: Ajanı bir komutla değil, bir durum raporuyla tetikliyoruz.
+initial_prompt = """
+GELEN OLAY: Ecem adlı kişiden yeni bir mesaj alındı.
+MESAJ İÇERİĞİ: "bu gun napicaksin"
+GÖREV: Bu duruma uygun şekilde tepki ver. Gerekli araçları kullanarak bir eylem planı oluştur ve uygula.
+"""
+
+conversation_history = [
+    AIMessage(content=AGENT_PERSONA),
+    HumanMessage(content=initial_prompt)
+]
+
+# Grafı çalıştır
+print("--- AJAN TETİKLENDİ ---")
+inputs = {"messages": conversation_history}
+
+for event in app.stream(inputs, stream_mode="values"):
+    last_message = event["messages"][-1]
+    
+    if isinstance(last_message, AIMessage) and not last_message.tool_calls:
+        print(f"Bot: {last_message.content}")
+
+print("\n--- İŞ AKIŞI TAMAMLANDI ---")
