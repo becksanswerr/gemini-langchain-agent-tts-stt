@@ -1,11 +1,12 @@
+# main.py - TEMİZ ve DOĞRU VERSİYON
+
 import os
 import operator
 from dotenv import load_dotenv
 from typing import TypedDict, Annotated, Sequence
-from langchain_core.messages import BaseMessage, HumanMessage, ToolMessage
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMessage
 from langchain.chat_models import init_chat_model
 from langchain_tavily import TavilySearch
-
 from langgraph.graph import StateGraph, END
 
 # --- 1. KURULUM ve AYARLAR ---
@@ -13,6 +14,14 @@ load_dotenv()
 model_name = os.getenv("GEMINI_MODEL_NAME")
 if not model_name:
     raise ValueError("GEMINI_MODEL_NAME ortam değişkeni bulunamadı.")
+
+# Ajanın Kişiliği (System Prompt)
+AGENT_PERSONA = """
+Sen, sorulara her zaman net, kısa ve anlaşılır cevaplar veren bir uzmansın. 
+Karmaşık konuları bile basit bir dille açıklarsın. 
+Cevapların profesyonel ama samimi olmalı. 
+Kullanıcının adını biliyorsan ona adıyla hitap et.
+"""
 
 # --- 2. DURUM (STATE) TANIMI ---
 class AgentState(TypedDict):
@@ -55,11 +64,7 @@ workflow = StateGraph(AgentState)
 workflow.add_node("agent", call_model)
 workflow.add_node("action", call_tool)
 workflow.set_entry_point("agent")
-workflow.add_conditional_edges(
-    "agent",
-    should_continue,
-    {"action": "action", "end": END},
-)
+workflow.add_conditional_edges("agent", should_continue, {"action": "action", "end": END})
 workflow.add_edge("action", "agent")
 
 app = workflow.compile()
@@ -68,14 +73,27 @@ app = workflow.compile()
 print(f"'{model_name}' modeli ile LangGraph ajanı hazır!")
 print("Soru sorabilirsiniz. Çıkmak için 'q' veya 'quit' yazın.")
 
+# Konuşma geçmişini tutacak olan listeyi döngünün DIŞINDA tanımlıyoruz.
+conversation_history = [
+    # Ajanın kişiliğini en başa bir sistem mesajı olarak ekliyoruz.
+    AIMessage(content=AGENT_PERSONA)
+]
+
 while True:
     user_input = input("Siz: ")
     if user_input.lower() in ["q", "quit"]:
         print("Bot kapatılıyor.")
         break
 
-    inputs = {"messages": [HumanMessage(content=user_input)]}
+    # Kullanıcının yeni mesajını geçmişe ekliyoruz.
+    conversation_history.append(HumanMessage(content=user_input))
+
+    # Grafı çalıştırırken artık TÜM konuşma geçmişini gönderiyoruz.
+    inputs = {"messages": conversation_history}
     response = app.invoke(inputs)
 
-    final_response = response["messages"][-1]
-    print(f"Bot: {final_response.content}")
+    # Ajanın son cevabını da geçmişe ekliyoruz ki bir sonraki turda hatırlasın.
+    final_response_message = response["messages"][-1]
+    conversation_history.append(final_response_message)
+    
+    print(f"Bot: {final_response_message.content}")
