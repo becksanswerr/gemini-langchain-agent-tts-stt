@@ -3,7 +3,7 @@
 import os
 from langchain_core.tools import tool
 
-FAKE_TODO_LIST = "Bugün için planlanmış bir şey yok."
+FAKE_TODO_LIST = "Excel dosyasında 4 + 5in sonucunu yazacağım."
 # YENİ: Cevapların kaydedileceği klasörü ayrı bir değişken olarak tanımlıyoruz.
 REPLIES_DIR = "sent_replies"
 
