@@ -1,7 +1,8 @@
-# agent_core.py - TEMBEL BAŞLATMA İLE NİHAİ VERSİYON
+# agent_core.py 
 
 import os
 import operator
+import tts_handler
 from dotenv import load_dotenv
 from typing import TypedDict, Annotated, Sequence
 
@@ -11,7 +12,7 @@ from langgraph.graph import StateGraph, END
 from langchain_tavily import TavilySearch
 
 # Yerel importları geri getiriyoruz.
-from tools.custom_tools import read_todo_list, send_message
+from tools.custom_tools import  get_landoflegends_events, get_current_time
 
 # .env dosyasını en başta, bir kere yüklüyoruz.
 load_dotenv()
@@ -25,7 +26,7 @@ def get_tools():
         tavily_api_key = os.getenv("TAVILY_API_KEY") # Anahtarı burada, güvenli bir şekilde okuruz.
     )
     # Tüm araçları bir listeye koyuyoruz.
-    return [read_todo_list, send_message, tavily_tool]
+    return [tavily_tool, get_landoflegends_events, get_current_time]
 
 
 class AgentState(TypedDict):
