@@ -180,3 +180,4 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 *.pth
+/wav (get out this folder)
