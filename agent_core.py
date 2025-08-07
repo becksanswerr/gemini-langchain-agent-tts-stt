@@ -10,9 +10,9 @@ from langchain_core.messages import BaseMessage, AIMessage, ToolMessage
 from langchain.chat_models import init_chat_model
 from langgraph.graph import StateGraph, END
 from langchain_tavily import TavilySearch
-
+from config import SYSTEM_PROMPT
 # Yerel importları geri getiriyoruz.
-from tools.custom_tools import  get_landoflegends_events, get_current_time
+from tools.custom_tools import  get_landoflegends_events, get_current_time, get_hotel_info, get_park_units
 
 # .env dosyasını en başta, bir kere yüklüyoruz.
 load_dotenv()
@@ -21,12 +21,18 @@ model_name = os.getenv("GEMINI_MODEL_NAME")
 # Onları sadece ihtiyaç duyulduğunda oluşturacak bir fonksiyon yazıyoruz.
 def get_tools():
     """İhtiyaç duyulduğunda araçları oluşturur ve döndürür."""
-    tavily_tool = TavilySearch(
-        max_results=3, 
-        tavily_api_key = os.getenv("TAVILY_API_KEY") # Anahtarı burada, güvenli bir şekilde okuruz.
-    )
-    # Tüm araçları bir listeye koyuyoruz.
-    return [tavily_tool, get_landoflegends_events, get_current_time]
+    #tavily_tool = TavilySearch(
+    #    max_results=3, 
+    #    tavily_api_key = os.getenv("TAVILY_API_KEY")
+    #)
+    return [
+        #tavily_tool, 
+        get_current_time,
+        get_landoflegends_events, 
+        get_park_units,
+        get_hotel_info
+    ]
+
 
 
 class AgentState(TypedDict):
