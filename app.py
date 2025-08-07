@@ -16,28 +16,41 @@ def main_app():
     st.set_page_config(page_title="Voice AI Agent", layout="wide")
 
     # --- ÖNBELLEKLEME (CACHING) ---
-    @st.cache_resource
-    def get_tts_stream():
-        return initialize_tts_engine()
-
-    tts_stream = get_tts_stream()
+    #@st.cache_resource
+    #def get_tts_stream():
+    #    return initialize_tts_engine()
+    #tts_stream = get_tts_stream()
 
 
     # --- YARDIMCI FONKSİYONLAR ---
     def run_agent(prompt):
+        """Ajanı çalıştırır, cevabını ve eylemlerini gösterir."""
         with st.chat_message("assistant"):
+            final_bot_response = None
             with st.spinner("Düşünüyor..."):
                 inputs = {"messages": st.session_state.messages}
-                result = app.invoke(inputs)
-                bot_response = result["messages"][-1]
-                st.session_state.messages.append(bot_response)
 
-                audio_path = generate_and_save_audio(tts_stream, bot_response.content)
-                
-                if audio_path:
-                    st.session_state.audio_to_play = audio_path
-                
-                st.rerun()
+                result = app.invoke(inputs)
+                final_bot_response = result["messages"][-1]
+                st.session_state.messages.append(final_bot_response)
+
+                # Şeffaflık katmanı
+                tool_calls = [msg.tool_calls for msg in result["messages"] if hasattr(msg, "tool_calls") and msg.tool_calls]
+                if tool_calls:
+                    with st.expander("🤖 Ajanın Eylemleri"):
+                        # tool_calls listesi içindeki listeyi düzleştir
+                        all_calls = [item for sublist in tool_calls for item in sublist]
+                        for tool_call in all_calls:
+                            st.markdown(f"**Araç:** `{tool_call['name']}`")
+                            st.markdown(f"**Parametreler:** `{tool_call['args']}`")
+
+            # GÜNCELLEME: TTS sadece her şey bittikten sonra, nihai cevap için çağrılır
+            #if final_bot_response:
+            #    audio_path = generate_and_save_audio(tts_stream, final_bot_response.content)
+            #    if audio_path:
+            #        st.session_state.audio_to_play = audio_path
+#
+            st.rerun()
 
     # --- OTURUM (SESSION) YÖNETİMİ ---
     if "messages" not in st.session_state:
