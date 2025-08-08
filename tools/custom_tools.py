@@ -31,9 +31,8 @@ def get_park_units():
     özelliklerini ve özellikle yaş/boy gibi kısıtlamalarını listelemek için kullanılır."""
     
     print("--- ARAÇ: Park Üniteleri API'si çağrılıyor (GELİŞMİŞ VERSİYON)... ---")
-    url = "https://www.thelandoflegends.com/en/api/unex-list"
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(lol_unit_api, timeout=10)
         response.raise_for_status()
         units_data = response.json()
         
@@ -84,9 +83,8 @@ def get_hotel_info():
     teklifler (offers) ve indirimler (discounts) hakkında detaylı bilgi almak için kullanılır."""
     
     print("--- ARAÇ: Otel Bilgileri API'si çağrılıyor (GELİŞMİŞ VERSİYON)... ---")
-    url = "***REMOVED***"
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(lol_hotel_api, timeout=10)
         response.raise_for_status()
         hotels_data = response.json()
         
