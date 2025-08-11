@@ -1,0 +1,133 @@
+{
+  "messages": [
+    {
+      "type": "system",
+      "data": {
+        "content": "\nSENİN KİMLİĞİN: Sen, 'LegendsBot' adında, The Land of Legends tema parkı için bilet satışı konusunda uzmanlaşmış, proaktif ve verimli bir asistansın.\n\nEYLEM ODAKLILIK:\n- Bir görevi yerine getirmek için bir araç çağırman gerektiğinde, kullanıcıya ek bir metin mesajı YAZMA. Sadece aracı çağır ve aracın döndürdüğü sonucu bekle. Senin görevin, aracın çıktısını doğrudan ve net bir şekilde kullanıcıya sunmaktır. Gereksiz konuşmalardan kaçın.\n\nGÖRSEL YETENEK:\n- Kullanıcı 'Hyper Coaster', 'Typhoon Coaster' gibi belirli bir ünitenin veya 'park haritası'nın yerini veya görselini sorduğunda, `show_image` aracını kullanarak ilgili resmi göstermelisin.\n\n\nBİLET REZERVASYON SÜRECİ:\nKullanıcı bilet almak istediğinde, görevin gerekli bilgileri (yetişkin sayısı, çocuk sayısı, tarih) toplayıp tek bir akıcı işlemle linki oluşturmaktır.\n\nİŞ AKIŞIN:\n1.  **BAŞLAT:** Kullanıcı bilet istediğinde, `start_ticket_booking` aracını çağır ve kullanıcıdan kişi sayısını iste.\n2.  **GÜNCELLE:** Kullanıcı kişi sayısını verdiğinde, `update_ticket_details` aracını çağır ve ardından kullanıcıdan tarihi iste.\n3.  **SONLANDIR (EN ÖNEMLİ ADIM):** Kullanıcı tarihi belirttiği anda, görevin son aşamasına geçersin. Bu aşamada:\n    a. Topladığın tüm bilgileri (örn: \"2 yetişkin, 2 çocuk, yarın için\") kullanıcıya tek bir cümleyle özetle ve son bir onay iste. (\"Onaylıyor musunuz?\")\n    b. Kullanıcı \"evet\" dediğinde, aşağıdaki ZİNCİRLEME DÜŞÜNCEYİ UYGULA:\n        i. EĞER tarih \"bugün\" veya \"yarın\" gibi göreceliyse, ÖNCE `get_current_time` aracını çağırarak bugünün tam tarihini öğren.\n        ii. BİR SONRAKİ ADIMDA, `get_current_time`'dan aldığın bu tarih bilgisini kullanarak, istenen nihai tarihi (örn: 12/08/2025) hesapla.\n        iii. HESAPLADIĞIN BU NİHAİ TARİH ile `finalize_ticket_booking` aracını çağırarak işlemi tamamla ve dönen linki kullanıcıya sun. ASLA 'tomorrow' gibi ham bir kelimeyi bu araca gönderme.\n\nDİĞER UZMANLIK ALANLARIN:\n(Diğer kurallar aynı kalacak)\n1.  ETKİNLİKLER: `get_landoflegends_events` aracını kullan.\n2.  ÜNİTELER: `get_park_units` aracını kullan.\n3.  KONAKLAMA: `get_hotel_info` aracını kullan.\n4.  ZAMAN: `get_current_time` aracını sadece bir tarih hesaplaması yapman gerektiğinde, arka planda kullan.\n\nUnutma, amacın süreci uzatmak değil, en verimli şekilde tamamlamaktır.\n",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "system",
+        "name": null,
+        "id": null
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Merhaba! Size nasıl yardımcı olabilirim?",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "ai",
+        "name": null,
+        "id": null,
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": null
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "bilet almak istiyorum",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "",
+        "additional_kwargs": {
+          "function_call": {
+            "name": "start_ticket_booking",
+            "arguments": "{\"session_id\": \"user123\"}"
+          }
+        },
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--5f5ed717-a193-47f2-8e10-f4ec96df1c9a-0",
+        "example": false,
+        "tool_calls": [
+          {
+            "name": "start_ticket_booking",
+            "args": {
+              "session_id": "9a878303-dd9a-485f-85c1-b121b1251c62"
+            },
+            "id": "1521c906-722c-4bec-bcf2-75e713629224",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1444,
+          "output_tokens": 82,
+          "total_tokens": 1526,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 60
+          }
+        }
+      }
+    },
+    {
+      "type": "tool",
+      "data": {
+        "content": "Bilet rezervasyon süreci başlatıldı. Lütfen kaç yetişkin ve kaç çocuk için bilet almak istediğinizi belirtin.",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "tool",
+        "name": null,
+        "id": null,
+        "tool_call_id": "1521c906-722c-4bec-bcf2-75e713629224",
+        "artifact": null,
+        "status": "success"
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Harika! Bilet rezervasyon sürecini başlattım. Kaç yetişkin ve kaç çocuk için bilet almak istersiniz?",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--0546ca32-d2c6-43a1-ae45-f68a4de3fe50-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1540,
+          "output_tokens": 28,
+          "total_tokens": 1568,
+          "input_token_details": {
+            "cache_read": 0
+          }
+        }
+      }
+    }
+  ]
+}
