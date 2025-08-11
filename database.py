@@ -1,26 +1,38 @@
 # database.py
 
 import os
-import pymongo
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+import json
+from langchain_core.messages import message_to_dict
 
-# MongoDB'ye bir kere bağlanıp istemciyi yeniden kullan
-client = MongoClient(os.getenv("MONGO_URI"))
-db = client.get_database("ai_agent_db") # Veritabanı adı
-conversations_collection = db.get_collection("conversations") # Koleksiyon adı
+DB_DIR = "db"
+
+def _get_filepath(session_id: str, prefix: str) -> str:
+    """Belirli bir session için dosya yolunu oluşturur."""
+    os.makedirs(DB_DIR, exist_ok=True)
+    return os.path.join(DB_DIR, f"{prefix}_{session_id}.json")
+
+def save_json_data(session_id: str, data: dict, prefix: str):
+    """Veriyi belirtilen session için bir JSON dosyasına kaydeder."""
+    filepath = _get_filepath(session_id, prefix)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def load_json_data(session_id: str, prefix: str) -> dict | None:
+    """Belirtilen session için JSON dosyasından veri yükler."""
+    filepath = _get_filepath(session_id, prefix)
+    if os.path.exists(filepath):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return None
+
+def delete_json_data(session_id: str, prefix: str):
+    """Belirtilen session için JSON dosyasını siler."""
+    filepath = _get_filepath(session_id, prefix)
+    if os.path.exists(filepath):
+        os.remove(filepath)
 
 def save_conversation(session_id: str, messages: list):
-    """Konuşma geçmişini MongoDB'ye kaydeder veya günceller."""
-    # Mesajları veritabanına uygun formata çevir
-    #     db_messages = [msg.dict() for msg in messages]
-    
-    conversations_collection.update_one(
-        {"_id": session_id},
-        {"$set": {"messages": db_messages}},
-        upsert=True # Eğer session_id yoksa yeni bir döküman oluştur
-    )
+    """Konuşma geçmişini bir JSON dosyasına kaydeder."""
+    dict_messages = [message_to_dict(msg) for msg in messages]
+    save_json_data(session_id, {"messages": dict_messages}, prefix="conv")
 
-def get_conversations():
-    """Tüm geçmiş konuşmaları veritabanından çeker."""
-    return list(conversations_collection.find())

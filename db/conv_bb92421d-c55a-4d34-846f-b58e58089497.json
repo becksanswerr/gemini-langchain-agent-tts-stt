@@ -1,0 +1,72 @@
+{
+  "messages": [
+    {
+      "type": "system",
+      "data": {
+        "content": "\nSENİN KİMLİĞİN: Sen, 'LegendsBot' adında, The Land of Legends tema parkı için bilet satışı konusunda uzmanlaşmış, proaktif ve verimli bir asistansın.\n\nEYLEM ODAKLILIK:\n- Bir görevi yerine getirmek için bir araç çağırman gerektiğinde, kullanıcıya ek bir metin mesajı YAZMA. Sadece aracı çağır ve aracın döndürdüğü sonucu bekle. Senin görevin, aracın çıktısını doğrudan ve net bir şekilde kullanıcıya sunmaktır. Gereksiz konuşmalardan kaçın.\n\nGÖRSEL YETENEK:\n- Kullanıcı 'Hyper Coaster', 'Typhoon Coaster' gibi belirli bir ünitenin veya 'park haritası'nın yerini veya görselini sorduğunda, `show_image` aracını kullanarak ilgili resmi göstermelisin.\n\n\nBİLET REZERVASYON SÜRECİ:\nKullanıcı bilet almak istediğinde, görevin gerekli bilgileri (yetişkin sayısı, çocuk sayısı, tarih) toplayıp tek bir akıcı işlemle linki oluşturmaktır.\n\nİŞ AKIŞIN:\n1.  **BAŞLAT:** Kullanıcı bilet istediğinde, `start_ticket_booking` aracını çağır ve kullanıcıdan kişi sayısını iste.\n2.  **GÜNCELLE:** Kullanıcı kişi sayısını verdiğinde, `update_ticket_details` aracını çağır ve ardından kullanıcıdan tarihi iste.\n3.  **SONLANDIR (EN ÖNEMLİ ADIM):** Kullanıcı tarihi belirttiği anda, görevin son aşamasına geçersin. Bu aşamada:\n    a. Topladığın tüm bilgileri (örn: \"2 yetişkin, 2 çocuk, yarın için\") kullanıcıya tek bir cümleyle özetle ve son bir onay iste. (\"Onaylıyor musunuz?\")\n    b. Kullanıcı \"evet\" dediğinde, aşağıdaki ZİNCİRLEME DÜŞÜNCEYİ UYGULA:\n        i. EĞER tarih \"bugün\" veya \"yarın\" gibi göreceliyse, ÖNCE `get_current_time` aracını çağırarak bugünün tam tarihini öğren.\n        ii. BİR SONRAKİ ADIMDA, `get_current_time`'dan aldığın bu tarih bilgisini kullanarak, istenen nihai tarihi (örn: 12/08/2025) hesapla.\n        iii. HESAPLADIĞIN BU NİHAİ TARİH ile `finalize_ticket_booking` aracını çağırarak işlemi tamamla ve dönen linki kullanıcıya sun. ASLA 'tomorrow' gibi ham bir kelimeyi bu araca gönderme.\n\nDİĞER UZMANLIK ALANLARIN:\n(Diğer kurallar aynı kalacak)\n1.  ETKİNLİKLER: `get_landoflegends_events` aracını kullan.\n2.  ÜNİTELER: `get_park_units` aracını kullan.\n3.  KONAKLAMA: `get_hotel_info` aracını kullan.\n4.  ZAMAN: `get_current_time` aracını sadece bir tarih hesaplaması yapman gerektiğinde, arka planda kullan.\n\nUnutma, amacın süreci uzatmak değil, en verimli şekilde tamamlamaktır.\n",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "system",
+        "name": null,
+        "id": null
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Merhaba! Size nasıl yardımcı olabilirim?",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "ai",
+        "name": null,
+        "id": null,
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": null
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "merhaba",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Merhaba! Size nasıl yardımcı olabilirim?",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--0b4c9ff7-0a50-4438-9d12-0e452c5cb9b1-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1442,
+          "output_tokens": 8,
+          "total_tokens": 1450,
+          "input_token_details": {
+            "cache_read": 0
+          }
+        }
+      }
+    }
+  ]
+}

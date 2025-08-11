@@ -1,0 +1,776 @@
+{
+  "messages": [
+    {
+      "type": "system",
+      "data": {
+        "content": "\nSENİN KİMLİĞİN: Sen, 'LegendsBot' adında, The Land of Legends tema parkı için bilet satışı konusunda uzmanlaşmış, proaktif ve verimli bir asistansın.\n\nEYLEM ODAKLILIK:\n- Bir görevi yerine getirmek için bir araç çağırman gerektiğinde, kullanıcıya ek bir metin mesajı YAZMA. Sadece aracı çağır ve aracın döndürdüğü sonucu bekle. Senin görevin, aracın çıktısını doğrudan ve net bir şekilde kullanıcıya sunmaktır. Gereksiz konuşmalardan kaçın.\n\nGÖRSEL YETENEK:\n- Kullanıcı 'Hyper Coaster', 'Typhoon Coaster' gibi belirli bir ünitenin veya 'park haritası'nın yerini veya görselini sorduğunda, `show_image` aracını kullanarak ilgili resmi göstermelisin.\n\n\nBİLET REZERVASYON SÜRECİ:\nKullanıcı bilet almak istediğinde, görevin gerekli bilgileri (yetişkin sayısı, çocuk sayısı, tarih) toplayıp tek bir akıcı işlemle linki oluşturmaktır.\n\nİŞ AKIŞIN:\n1.  **BAŞLAT:** Kullanıcı bilet istediğinde, `start_ticket_booking` aracını çağır ve kullanıcıdan kişi sayısını iste.\n2.  **GÜNCELLE:** Kullanıcı kişi sayısını verdiğinde, `update_ticket_details` aracını çağır ve ardından kullanıcıdan tarihi iste.\n3.  **SONLANDIR (EN ÖNEMLİ ADIM):** Kullanıcı tarihi belirttiği anda, görevin son aşamasına geçersin. Bu aşamada:\n    a. Topladığın tüm bilgileri (örn: \"2 yetişkin, 2 çocuk, yarın için\") kullanıcıya tek bir cümleyle özetle ve son bir onay iste. (\"Onaylıyor musunuz?\")\n    b. Kullanıcı \"evet\" dediğinde, aşağıdaki ZİNCİRLEME DÜŞÜNCEYİ UYGULA:\n        i. EĞER tarih \"bugün\" veya \"yarın\" gibi göreceliyse, ÖNCE `get_current_time` aracını çağırarak bugünün tam tarihini öğren.\n        ii. BİR SONRAKİ ADIMDA, `get_current_time`'dan aldığın bu tarih bilgisini kullanarak, istenen nihai tarihi (örn: 12/08/2025) hesapla.\n        iii. HESAPLADIĞIN BU NİHAİ TARİH ile `finalize_ticket_booking` aracını çağırarak işlemi tamamla ve dönen linki kullanıcıya sun. ASLA 'tomorrow' gibi ham bir kelimeyi bu araca gönderme.\n\nDİĞER UZMANLIK ALANLARIN:\n(Diğer kurallar aynı kalacak)\n1.  ETKİNLİKLER: `get_landoflegends_events` aracını kullan.\n2.  ÜNİTELER: `get_park_units` aracını kullan.\n3.  KONAKLAMA: `get_hotel_info` aracını kullan.\n4.  ZAMAN: `get_current_time` aracını sadece bir tarih hesaplaması yapman gerektiğinde, arka planda kullan.\n\nUnutma, amacın süreci uzatmak değil, en verimli şekilde tamamlamaktır.\n",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "system",
+        "name": null,
+        "id": null
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Merhaba! Size nasıl yardımcı olabilirim?",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "ai",
+        "name": null,
+        "id": null,
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": null
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "merhaba",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Merhaba! Size nasıl yardımcı olabilirim?",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--b2f6e308-7f0b-4380-84ef-31f3338c1de1-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1442,
+          "output_tokens": 8,
+          "total_tokens": 1450,
+          "input_token_details": {
+            "cache_read": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "bilet almak istiyorum",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "",
+        "additional_kwargs": {
+          "function_call": {
+            "name": "start_ticket_booking",
+            "arguments": "{\"session_id\": \"user123\"}"
+          }
+        },
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--f9c9e579-627e-4bca-8012-0d0cd3826e34-0",
+        "example": false,
+        "tool_calls": [
+          {
+            "name": "start_ticket_booking",
+            "args": {
+              "session_id": "ce64f650-1b87-4ca9-a150-0b880666869b"
+            },
+            "id": "0e64bf61-93f9-489a-9234-b72131c4026a",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1456,
+          "output_tokens": 86,
+          "total_tokens": 1542,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 64
+          }
+        }
+      }
+    },
+    {
+      "type": "tool",
+      "data": {
+        "content": "Bilet rezervasyon süreci başlatıldı. Lütfen kaç yetişkin ve kaç çocuk için bilet almak istediğinizi belirtin.",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "tool",
+        "name": null,
+        "id": null,
+        "tool_call_id": "0e64bf61-93f9-489a-9234-b72131c4026a",
+        "artifact": null,
+        "status": "success"
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Bilet rezervasyon süreci başlatıldı. Lütfen kaç yetişkin ve kaç çocuk için bilet almak istediğinizi belirtin.",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--1ee046bd-773c-4129-a833-60211123b1fd-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1551,
+          "output_tokens": 27,
+          "total_tokens": 1578,
+          "input_token_details": {
+            "cache_read": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "1 yetişkin 2 çocuk",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "",
+        "additional_kwargs": {
+          "function_call": {
+            "name": "update_ticket_details",
+            "arguments": "{\"session_id\": \"ce64f650-1b87-4ca9-a150-0b880666869b\", \"adults\": 1.0, \"children\": 2.0}"
+          }
+        },
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--af875adc-5e6c-4b97-a2f3-fa351613909c-0",
+        "example": false,
+        "tool_calls": [
+          {
+            "name": "update_ticket_details",
+            "args": {
+              "session_id": "ce64f650-1b87-4ca9-a150-0b880666869b",
+              "adults": 1.0,
+              "children": 2.0
+            },
+            "id": "b02db27d-8f92-4e3a-90a9-d105837b1d32",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1586,
+          "output_tokens": 127,
+          "total_tokens": 1713,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 64
+          }
+        }
+      }
+    },
+    {
+      "type": "tool",
+      "data": {
+        "content": "1 yetişkin ve 2 çocuk için bilet bilgisi alındı. Lütfen biletin geçerli olacağı tarihi belirtin (örn: 'bugün', 'yarın', '11/08/2025').",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "tool",
+        "name": null,
+        "id": null,
+        "tool_call_id": "b02db27d-8f92-4e3a-90a9-d105837b1d32",
+        "artifact": null,
+        "status": "success"
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "1 yetişkin ve 2 çocuk için bilet bilgisi alındı. Lütfen biletin geçerli olacağı tarihi belirtin (örn: 'bugün', 'yarın', '11/08/2025').",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--646ff65f-5a81-496f-94a2-d6edf6a1080c-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1718,
+          "output_tokens": 50,
+          "total_tokens": 1768,
+          "input_token_details": {
+            "cache_read": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "yarın",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "",
+        "additional_kwargs": {
+          "function_call": {
+            "name": "get_current_time",
+            "arguments": "{}"
+          }
+        },
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--3d960722-7b0d-40cf-a67f-530de259ba4e-0",
+        "example": false,
+        "tool_calls": [
+          {
+            "name": "get_current_time",
+            "args": {
+              "session_id": "ce64f650-1b87-4ca9-a150-0b880666869b"
+            },
+            "id": "dddab8f5-64cf-45a1-87a5-cefc75474826",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1772,
+          "output_tokens": 80,
+          "total_tokens": 1852,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 68
+          }
+        }
+      }
+    },
+    {
+      "type": "tool",
+      "data": {
+        "content": "Monday, 11 August 2025, 14:54",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "tool",
+        "name": null,
+        "id": null,
+        "tool_call_id": "dddab8f5-64cf-45a1-87a5-cefc75474826",
+        "artifact": null,
+        "status": "success"
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "1 yetişkin, 2 çocuk için yarın (12/08/2025) tarihli bilet rezervasyonunu onaylıyor musunuz?",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--39e3aa20-e906-4e17-a618-8135bb4f41e0-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1858,
+          "output_tokens": 178,
+          "total_tokens": 2036,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 143
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "evet",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "",
+        "additional_kwargs": {
+          "function_call": {
+            "name": "finalize_ticket_booking",
+            "arguments": "{\"ticket_date\": \"12/08/2025\", \"session_id\": \"ce64f650-1b87-4ca9-a150-0b880666869b\"}"
+          }
+        },
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--515135c0-aa56-46b2-b9a8-0d5bccefcb5f-0",
+        "example": false,
+        "tool_calls": [
+          {
+            "name": "finalize_ticket_booking",
+            "args": {
+              "ticket_date": "12/08/2025",
+              "session_id": "ce64f650-1b87-4ca9-a150-0b880666869b"
+            },
+            "id": "5b74b154-9e2d-4723-aab0-4ced51c9c8f4",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 1897,
+          "output_tokens": 228,
+          "total_tokens": 2125,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 160
+          }
+        }
+      }
+    },
+    {
+      "type": "tool",
+      "data": {
+        "content": "Rezervasyonunuz oluşturuldu. Ödeme yapmak ve biletlerinizi almak için lütfen şu linki kullanın: https://www.thelandoflegends.com/cart/ticket/step-1?ticket_type=TICKET_DAILY&_ticket_date=12%2F08%2F2025",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "tool",
+        "name": null,
+        "id": null,
+        "tool_call_id": "5b74b154-9e2d-4723-aab0-4ced51c9c8f4",
+        "artifact": null,
+        "status": "success"
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Rezervasyonunuz oluşturuldu. Ödeme yapmak ve biletlerinizi almak için lütfen şu linki kullanın: https://www.thelandoflegends.com/cart/ticket/step-1?ticket_type=TICKET_DAILY&_ticket_date=12%2F08%2F2025",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--e29e8069-1904-4830-b31b-29e987eefd84-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 2051,
+          "output_tokens": 70,
+          "total_tokens": 2121,
+          "input_token_details": {
+            "cache_read": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "im so hungary",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Aç hissetmenize üzüldüm. The Land of Legends tema parkı hakkında size nasıl yardımcı olabilirim? Belki parktaki yiyecek ve içecek seçenekleri hakkında bilgi verebilirim.",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--82bebd80-05ed-4ec6-9d21-e1762c562ad2-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 2127,
+          "output_tokens": 127,
+          "total_tokens": 2254,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 83
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "i want to speak english with you",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Okay, I can definitely speak English with you. How can I assist you today regarding The Land of Legends theme park?",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--e7a215e1-d270-4a03-809a-eed2e0c07a5d-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 2180,
+          "output_tokens": 62,
+          "total_tokens": 2242,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 38
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "nick otel hakkında bilgi verir misin",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "",
+        "additional_kwargs": {
+          "function_call": {
+            "name": "get_hotel_info",
+            "arguments": "{}"
+          }
+        },
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--1e70c5f0-a4a4-4f6d-a68c-62afc410b8f8-0",
+        "example": false,
+        "tool_calls": [
+          {
+            "name": "get_hotel_info",
+            "args": {
+              "session_id": "ce64f650-1b87-4ca9-a150-0b880666869b"
+            },
+            "id": "ebe89f92-8c1d-4af7-92ec-446f56fb66a2",
+            "type": "tool_call"
+          }
+        ],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 2214,
+          "output_tokens": 57,
+          "total_tokens": 2271,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 45
+          }
+        }
+      }
+    },
+    {
+      "type": "tool",
+      "data": {
+        "content": "The Land of Legends'taki konaklama bilgileri, ayrıcalıklar ve teklifler:\n\n🏨 OTEL: Nickelodeon Hotels &amp; Resorts Antalya\n   Açıklama: Are you ready to step into a world full of colorful characters?\nWith the Fullboard+ concept, where every detail is thoughtfully designed, we make your stay at Nickelodeon Hotels & Resorts Antalya truly unforgettable.\nFun is always with you in specially themed rooms inspired by SpongeBob SquarePants, Dora, PAW Patrol, Teenage Mutant Ninja Turtles, and Star Trek™.\nWe complete your holiday with comfort and joy through exclusive areas like Club Nick for kids, themed pools, a spa, Turkish bath, and a fitness center.\nIn addition to delicious breakfast, lunch, and dinner, we’re ready to add flavor to your stay with our dining spots like Nickelodeon All Star Cafe, Le Spatula, Snick Lounge, and Rainforest Juice Bar.\nCreate your own story in this vibrant atmosphere filled with surprises and activities for all ages!\nSpecial installment options are available for Nickelodeon Hotels & Resorts Antalya bookings with participating credit cards.\n   AYRICALIKLAR:\n     - Legendary Birthday Offer: Birthdays become unforgettable memories at The Land of Legends! A unique birthday experience awaits those taking advantage of this special package, offered to all guests of Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya. Your birthday excitement will be fueled by fun-filled moments, and a wealth of surprises and special touches! In this unique atmosphere, make wonderful memories with your loved ones and celebrate your birthday in a Legendary way!\n     - Rixos Premium Belek Privilege: In addition to the legendary experiences exclusive to The Land of Legends,\nall guests staying at Nickelodeon Hotels & Resorts Antalya can\nenjoy complimentary access to the stunning sea and beach at Rixos\nPremium Belek, with the convenience of a private shuttle service.Rixos Premium Belek Privilege\nShuttle Hours: 1:00 PM - 4:30 PM\n     - FULLBOARD+: Enjoy the open buffet all day long with a variety of flavors for breakfast, lunch and dinner at Le Spatula with the Fullboard+ concept. During your stay, get your soft drink from the Lobby Bar at any time you wish and enjoy your stay!\nOpening Hours: 07:00–11:00, 12:30–14:30, 18:30–21:30\nIncluded in the FULLBOARD+ concept.\n     - Lobby Bar: Guests can relax in the Lobby Bar while checking in or checking out, or can choose to stop by during the day to enjoy the terrace and enjoy our delicious drinks throughout the day.\nOpening Hours: 24/7\nIncluded in the FULLBOARD+ concept.\n     - Theme Park Access Perk!: Staying at Nickelodeon Hotels & Resorts Antalya or The Kingdom Hotel? Then get ready—no need to worry about theme park tickets!\nAs long as you're staying with us, all those epic water slides, wild roller coasters, and so much more are waiting for you for free.\nFlash your wristband and let the adventure begin!\nOpening Hours\nAdventure Land: 10:00 AM - 5:00 PM\nAqua Land: 10:00 AM - 5:00 PM\nNickelodeon Land:\n10:00 AM - 7:00 PM (Weekdays)\n10:00 AM - 9:00 PM (Weekends)\n   TEKLİFLER VE İNDİRİMLER:\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person birthday cake themed with Nickelodeon characters\n• A professional photo shoot with Nickelodeon characters during the celebration at Le Spatula*\n• A free Canal Tour with your family**\n• Fast Track privilege at the Theme Park for the entire family on the birthday****\n• Meet & Greet with Nickelodeon Characters*****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n\n--------------------\n\n🏨 OTEL: Kingdom Hotel\n   Açıklama: Are you ready to step into a world full of legends?\nWith the All-In concept, where every detail is thoughtfully designed for you, we’re taking the accommodation experience at Kingdom Hotel to a whole new level.\nFrom specially themed rooms and delicious options available throughout the day to surprises and fun-filled moments, every part of your holiday will be unforgettable.\nRenew your body and mind with holistic therapies and massages offered at Anjana Spa.\nWe are ready to add flavor to your holiday with our exceptional restaurants and bars such as Eternia Restaurant, Nyssa Bar, and The Legends Pub.\nBecome a part of this legend!\nSpecial installment options are available for Kingdom Hotel bookings with participating credit cards.\n   AYRICALIKLAR:\n     - Eternia Restaurant: Start your day with a fragrant breakfast, indulge in a refined dinner, and explore a world of flavors at the open buffet of Eternia Restaurant — all included in the All-In concept. \nYou’ll enjoy a wide variety of delicious dishes prepared with care and creativity.\nOpening Hours:\nBreakfast\nWeekdays: 07:00 – 10:30\nWeekends: 07:00 – 11:00\nDinner\nDaily: 19:00 – 21:30\nKingdom Hotel – 1st Floor\nLunch is served at Mungo Restaurant\nFrom 12:30 to 14:30, enjoy a diverse open buffet lunch at Mungo Restaurant, offering something for every taste.\nTropic Lagoon Area\nThe price includes fresh fruit juices, ice cream, as well as locally produced alcoholic and non-alcoholic beverages.\n     - Fast Track: Enjoy the most popular attractions without the queues with Fast Track privilege! Skip long queues, speed up your fun, wait less, experience more. 50% discount for Deluxe Room occupants and free of charge for all Suite Room guests!\n     - Ice Point Cafe: Take a refreshing break from the action of the Theme Park at Ice Point, included in the “All In” Concept. A sweet feast awaits you with a range of cold drinks and ice cream options.\nWorking Hours: 10:00 - 17:00\nAlcoholic/non-alcoholic local drinks all included.\n     - Legendary Birthday: Birthdays become unforgettable memories at The Land of Legends! A unique birthday experience awaits those taking advantage of this special package, offered to all guests of Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya. Your birthday excitement will be fueled by fun-filled moments, and a wealth of surprises and special touches! In this unique atmosphere, make wonderful memories with your loved ones and celebrate your birthday in a Legendary way!\n     - Snorkelling with Stringrays: Are you ready to explore? Discover the magic of the underwater world by swimming with stingrays in the Snorkelling with Stingrays experience! Book one day in advance to take advantage of this unique experience.\n*Valid until 31.12.2025. Reservations can made at the Waterfront Kingdom Reservation Point inside the Theme Park.\n     - Vista Cafe: Take time out to relax during the day with delicious coffee and light snacks at Vista Cafe, included within the “All In” Concept. Add a small but delightful touch to your fun.\nWorking Hours: 10:00 - 17:00\nAlcoholic/non-alcoholic local drinks all included.\n     - Shaky Cool: Take a break from your fun-filled theme park adventure at Shaky Cool, included in the “All In” Concept. Reenergise with refreshing drinks and snacks.\nWorking Hours: 10:00 - 17:00\nAlcoholic/non-alcoholic local drinks all included.\n     - Nysaa Bar: Enjoy colorful drinks and fun times at Nyssa Bar, designed especially for children as part of the “All In” Concept! Children can take a break from the fun and Xbox games with refreshing drinks.\nWorking Hours: 08:00 - 00:00\nSoft drinks included.\n     - Musical Boat Parade Show with Kids: The world famous Musical Boat Parade will be an unforgettable experience – A feast of light and music! Embark on a journey beyond your imagination as you witness an epic story featuring specially designed boats and a mesmerising atmosphere.\n     - Legends Pub: Enjoy pleasant drinks round the clock at Legends Pub, included in the “All In” Concept. Offering a cozy atmosphere and a wide selection of drinks, Legends Pub is the ideal meeting point where you can relax or enjoy pleasant times with your friends.\nWorking Hours: 24 hours\nAlcoholic and non-alcoholic local drinks all included.\n     - Cabana: \n     - Rixos Premium Belek Privilege: In addition to the legendary experiences exclusive to The Land of Legends, all our guests staying at Nickelodeon Hotels & Resorts Antalya can reach Rixos Premium Belek with a private shuttle service and benefit from its unique sea and beach free of charge.\nShuttle Hours: 1:00 PM - 4:30 PM\n     - Mungo Restaurant: Located within the vibrant and energetic atmosphere of Tropic Lagoon, Mungo Restaurant offers Kingdom Hotel guests an extensive open buffet experience as part of the All In Concept. From international dishes to vegetarian and vegan options, Mungo caters to every palate. Enjoy a delightful dining setting with colorful decor while discovering flavors from around the world.\n   TEKLİFLER VE İNDİRİMLER:\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n\n--------------------\n\n🏨 OTEL: Rixos Park Belek\n   Açıklama: Located on the seafront Rixos Park Belek welcomes its guests all-inclusive - all-exclusive and comfortable atmosphere.Rixos Park Belek which is the closest location to The Land of Legends among the Rixos Hotels opens the doors of unlimited entertainment to guests with privileged access to The Theme Park & Shopping Avenue with shuttle services throughout the day.\n   TEKLİFLER VE İNDİRİMLER:\n     - A delicious encounter awaits you on Legendary App!: Experience an unforgettable journey at Ala Akşam, located in the unique atmosphere of Shopping Avenue, with its stunning presentations and elegant, distinctive ambiance.\nEnjoy a 10% discount and indulge in an exceptional culinary adventure!\nDownload Legendary App now, get your Ala Akşam discount code, and treat yourself to exquisite flavors!\nAn unforgettable taste experience is just one click away!\nDownload Legendary App now and don’t miss this exclusive offer!\n{{WIDGET name=appYukleButonlari}}\n     - Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays!: Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays via the Legendary App!\nEnjoy all-inclusive stays at Rixos Downtown Antalya and Rixos Park Belek, and experience unlimited daily access to the legendary world of The Land of Legends Theme Park — with complimentary transfers included!\nDon’t miss the opportunity to get an extra 5% discount on top of existing offers when booking through the Legendary App!\nA vacation full of luxury, fun, and privileges is just a few taps away with the Legendary App!\nDownload the Legendary App now, book your stay using the coupon code you’ll get from the app, and enjoy both Rixos privileges and The Land of Legends Theme Park excitement together!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss out on this unique campaign!\n{{WIDGET name=appYukleButonlari}}\nCampaign Conditions:\n*This campaign is only valid for 2025 reservations at Rixos Park Belek and Rixos Downtown Antalya made via the Legendary App between July 9–December 31, 2025, using a coupon code obtained through the app.\n*Cannot be combined with other campaigns or special packages. Applies as an additional discount on top of all other offers.\n*The Land of Legends and Rixos Hotels reserve the right to change campaign conditions without prior notice.\n     - Exclusive on Legendary App: 10% Off Theme Park Tickets and Extras!: Special 10% Discount Theme Park Tickets and Extras Exclusive to the Legendary App!\nAll 2025 Theme Park tickets you purchase now through the Legendary App come with a 10% discount waiting for you.\nRefresh yourself in the cool waters of Aqua Land and Tropic Lagoon, dive into nonstop adventures at Adventure Land. Embark on a fun journey with SpongeBob SquarePants and friends in Nickelodeon Land, complete thrilling missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek™ universe!\nAll this awaits you at The Land of Legends Theme Park! Plus, enjoy an additional 10% discount on extras and experiences when you buy your tickets via the Legendary App!\nDon’t miss out on this legendary discount—download the Legendary App now and experience unforgettable moments at the Theme Park!\n{{WIDGET name=appYukleButonlari}}\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - 10% Discount On Theme Park Tickets!: 10% Off Theme Park Tickets!\nTake advantage of 10% off all 2025 Theme Park tickets you purchase now and enjoy an unforgettable experience filled with colorful slides and thrilling attractions!\nCool off in the refreshing waters of Aqua Land and Tropic Lagoon, or dive into non-stop adventures in Adventure Land.\nGo on a fun journey with SpongeBob and friends in Nickelodeon Land, complete exciting missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek universe!\nAll of this is waiting for you at The Land of Legends Theme Park!\n     - Hey Boy Hey Girl! Happy Birthday!: Free entry to Theme Park for children under 12(excluding 12 years) on their birthday.\n     - Corporate Partnerships: A 20% discount will be applied for employees of the institutions and associations with which we have agreements for Theme Park usage.\n20% CORPORATE DISCOUNT FOR EMPLOYEES OF ELIGIBLE INSTITUTIONS AND ASSOCIATIONS\nMINISTRY OF NATIONAL EDUCATION\nTURKISH ARMED FORCES\nMINISTRY OF INTERIOR\nGENERAL DIRECTORATE OF SECURITY\nFAMILIES OF MARTYRS AND VETERANS\nMINISTRY OF HEALTH\nANTALYA METROPOLITAN MUNICIPALITY\nMURATPAŞA MUNICIPALITY\nANTALYA RUSSIAN COMMUNITY ASSOCIATION\nFRESENIUS MEDICAL CARE\nLEVENT CHEMICALS\nCHAMBER OF MECHANICAL ENGINEERS\nANTALYA CHAMBER OF PHARMACISTS\nANTALYA PHARMACISTS' COOPERATIVE\nCHAMBER OF ELECTRICAL ENGINEERS – ANTALYA BRANCH\nCHAMBER OF CIVIL ENGINEERS – ANTALYA BRANCH\nANTALYA CHAMBER OF DENTISTS\nANTALYA MEDICAL CHAMBER\nBETA CONSTRUCTION-ALUMINUM-BUILDING WOODWORKS\nKONYAALTI MUNICIPALITY\nGENERAL DIRECTORATE OF HIGHWAYS\nEKDAĞ (SUBSIDIARY OF ANTALYA METROPOLITAN MUNICIPALITY)\nKEPEZ MUNICIPALITY\nHAVAŞ GROUND HANDLING SERVICES\nANTALYA REGIONAL DIRECTORATE OF AGRICULTURAL CREDIT COOPERATIVES\nDENİZBANK FENER BRANCH\nE.C.E MANAGEMENT OFFICE EMPLOYEES (MIGROS AND TERRACITY MANAGEMENT)\nDISTRICT GOVERNORATE OF MURATPAŞA\nOKYANUS COLLEGE STAFF\nBAHÇEŞEHİR COLLEGE STAFF\nİŞ INVESTMENT ANTALYA REGIONAL OFFICE\nFARMA BORSA DIGITAL INVESTMENT\nPRESS CARD HOLDERS – MEMBERS OF THE PRESS AND BROADCASTING INSTITUTIONS\nSUNEXPRESS EMPLOYEES\nANTALYA YOUNG BUSINESSPEOPLE ASSOCIATION (ANTGİAD)\nTHE LAND OF LEGENDS SHOPPING AVENUE STORE EMPLOYEES\nCW ENERGY\nTURKISH AIRLINES\nCOCA-COLA İÇECEK (CCI)\nUĞUR SCHOOLS\nZİRAAT BANK EMPLOYEES\nANKUTSAN EMPLOYEES\nAKBANK EMPLOYEES\nTGS GROUND SERVICES EMPLOYEES\nİHLAS HOLDING EMPLOYEES\nTURKNET EMPLOYEES\nANTALYA TOURIST GUIDES' ASSOCIATION\nTURKCELL EMPLOYEES\nMIGROS EMPLOYEES\nMAGNUM ICE CREAM COMPANY EMPLOYEES\nEMPLOYEES OF SABANCI GROUP COMPANIES (Enerjisa, Brisa, Kordsa, Çimsa, Akçansa, CarrefourSA, Teknosa, Yünsa, Aksigorta, Agesa, Temsa, SabancıDx, Exsa, Tursa)\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n\n--------------------\n\n🏨 OTEL: Rixos Downtown Antalya\n   Açıklama: During your vacation at Rixos Downtown, you can enter The Land of Legends Theme Park free of charge and experience adrenaline and fun to the fullest. With our free transfer service, you can easily reach The Land of Legends from Rixos Downtown and experience an amazing day in the legendary atmosphere of The Land of Legends. The Theme Park where you will meet high excitement, Shopping Avenue offering shopping pleasure from world fashion brands, our restaurants famous for their gourmet flavors and many more legendary experiences await you at The Land of Legends.\n   TEKLİFLER VE İNDİRİMLER:\n     - A delicious encounter awaits you on Legendary App!: Experience an unforgettable journey at Ala Akşam, located in the unique atmosphere of Shopping Avenue, with its stunning presentations and elegant, distinctive ambiance.\nEnjoy a 10% discount and indulge in an exceptional culinary adventure!\nDownload Legendary App now, get your Ala Akşam discount code, and treat yourself to exquisite flavors!\nAn unforgettable taste experience is just one click away!\nDownload Legendary App now and don’t miss this exclusive offer!\n{{WIDGET name=appYukleButonlari}}\n     - Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays!: Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays via the Legendary App!\nEnjoy all-inclusive stays at Rixos Downtown Antalya and Rixos Park Belek, and experience unlimited daily access to the legendary world of The Land of Legends Theme Park — with complimentary transfers included!\nDon’t miss the opportunity to get an extra 5% discount on top of existing offers when booking through the Legendary App!\nA vacation full of luxury, fun, and privileges is just a few taps away with the Legendary App!\nDownload the Legendary App now, book your stay using the coupon code you’ll get from the app, and enjoy both Rixos privileges and The Land of Legends Theme Park excitement together!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss out on this unique campaign!\n{{WIDGET name=appYukleButonlari}}\nCampaign Conditions:\n*This campaign is only valid for 2025 reservations at Rixos Park Belek and Rixos Downtown Antalya made via the Legendary App between July 9–December 31, 2025, using a coupon code obtained through the app.\n*Cannot be combined with other campaigns or special packages. Applies as an additional discount on top of all other offers.\n*The Land of Legends and Rixos Hotels reserve the right to change campaign conditions without prior notice.\n     - Exclusive on Legendary App: 10% Off Theme Park Tickets and Extras!: Special 10% Discount Theme Park Tickets and Extras Exclusive to the Legendary App!\nAll 2025 Theme Park tickets you purchase now through the Legendary App come with a 10% discount waiting for you.\nRefresh yourself in the cool waters of Aqua Land and Tropic Lagoon, dive into nonstop adventures at Adventure Land. Embark on a fun journey with SpongeBob SquarePants and friends in Nickelodeon Land, complete thrilling missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek™ universe!\nAll this awaits you at The Land of Legends Theme Park! Plus, enjoy an additional 10% discount on extras and experiences when you buy your tickets via the Legendary App!\nDon’t miss out on this legendary discount—download the Legendary App now and experience unforgettable moments at the Theme Park!\n{{WIDGET name=appYukleButonlari}}\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - 10% Discount On Theme Park Tickets!: 10% Off Theme Park Tickets!\nTake advantage of 10% off all 2025 Theme Park tickets you purchase now and enjoy an unforgettable experience filled with colorful slides and thrilling attractions!\nCool off in the refreshing waters of Aqua Land and Tropic Lagoon, or dive into non-stop adventures in Adventure Land.\nGo on a fun journey with SpongeBob and friends in Nickelodeon Land, complete exciting missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek universe!\nAll of this is waiting for you at The Land of Legends Theme Park!\n     - Hey Boy Hey Girl! Happy Birthday!: Free entry to Theme Park for children under 12(excluding 12 years) on their birthday.\n     - Corporate Partnerships: A 20% discount will be applied for employees of the institutions and associations with which we have agreements for Theme Park usage.\n20% CORPORATE DISCOUNT FOR EMPLOYEES OF ELIGIBLE INSTITUTIONS AND ASSOCIATIONS\nMINISTRY OF NATIONAL EDUCATION\nTURKISH ARMED FORCES\nMINISTRY OF INTERIOR\nGENERAL DIRECTORATE OF SECURITY\nFAMILIES OF MARTYRS AND VETERANS\nMINISTRY OF HEALTH\nANTALYA METROPOLITAN MUNICIPALITY\nMURATPAŞA MUNICIPALITY\nANTALYA RUSSIAN COMMUNITY ASSOCIATION\nFRESENIUS MEDICAL CARE\nLEVENT CHEMICALS\nCHAMBER OF MECHANICAL ENGINEERS\nANTALYA CHAMBER OF PHARMACISTS\nANTALYA PHARMACISTS' COOPERATIVE\nCHAMBER OF ELECTRICAL ENGINEERS – ANTALYA BRANCH\nCHAMBER OF CIVIL ENGINEERS – ANTALYA BRANCH\nANTALYA CHAMBER OF DENTISTS\nANTALYA MEDICAL CHAMBER\nBETA CONSTRUCTION-ALUMINUM-BUILDING WOODWORKS\nKONYAALTI MUNICIPALITY\nGENERAL DIRECTORATE OF HIGHWAYS\nEKDAĞ (SUBSIDIARY OF ANTALYA METROPOLITAN MUNICIPALITY)\nKEPEZ MUNICIPALITY\nHAVAŞ GROUND HANDLING SERVICES\nANTALYA REGIONAL DIRECTORATE OF AGRICULTURAL CREDIT COOPERATIVES\nDENİZBANK FENER BRANCH\nE.C.E MANAGEMENT OFFICE EMPLOYEES (MIGROS AND TERRACITY MANAGEMENT)\nDISTRICT GOVERNORATE OF MURATPAŞA\nOKYANUS COLLEGE STAFF\nBAHÇEŞEHİR COLLEGE STAFF\nİŞ INVESTMENT ANTALYA REGIONAL OFFICE\nFARMA BORSA DIGITAL INVESTMENT\nPRESS CARD HOLDERS – MEMBERS OF THE PRESS AND BROADCASTING INSTITUTIONS\nSUNEXPRESS EMPLOYEES\nANTALYA YOUNG BUSINESSPEOPLE ASSOCIATION (ANTGİAD)\nTHE LAND OF LEGENDS SHOPPING AVENUE STORE EMPLOYEES\nCW ENERGY\nTURKISH AIRLINES\nCOCA-COLA İÇECEK (CCI)\nUĞUR SCHOOLS\nZİRAAT BANK EMPLOYEES\nANKUTSAN EMPLOYEES\nAKBANK EMPLOYEES\nTGS GROUND SERVICES EMPLOYEES\nİHLAS HOLDING EMPLOYEES\nTURKNET EMPLOYEES\nANTALYA TOURIST GUIDES' ASSOCIATION\nTURKCELL EMPLOYEES\nMIGROS EMPLOYEES\nMAGNUM ICE CREAM COMPANY EMPLOYEES\nEMPLOYEES OF SABANCI GROUP COMPANIES (Enerjisa, Brisa, Kordsa, Çimsa, Akçansa, CarrefourSA, Teknosa, Yünsa, Aksigorta, Agesa, Temsa, SabancıDx, Exsa, Tursa)\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n\n--------------------\n\n🏨 OTEL: Rixos Premium Belek\n   Açıklama: During your vacation at Rixos Premium Belek, you can enter The Land of Legends Theme Park free of charge and experience adrenaline and fun to the fullest. With our free transfer service, you can easily reach The Land of Legends from Rixos Premium Belek and experience an amazing day in the atmosphere of The Land of Legends full of legends. The Theme Park where you will meet high excitement, Shopping Avenue offering shopping pleasure from world fashion brands, our restaurants famous for their gourmet flavors and many more legendary experiences await you at The Land of Legends.\n   TEKLİFLER VE İNDİRİMLER:\n     - A delicious encounter awaits you on Legendary App!: Experience an unforgettable journey at Ala Akşam, located in the unique atmosphere of Shopping Avenue, with its stunning presentations and elegant, distinctive ambiance.\nEnjoy a 10% discount and indulge in an exceptional culinary adventure!\nDownload Legendary App now, get your Ala Akşam discount code, and treat yourself to exquisite flavors!\nAn unforgettable taste experience is just one click away!\nDownload Legendary App now and don’t miss this exclusive offer!\n{{WIDGET name=appYukleButonlari}}\n     - Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays!: Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays via the Legendary App!\nEnjoy all-inclusive stays at Rixos Downtown Antalya and Rixos Park Belek, and experience unlimited daily access to the legendary world of The Land of Legends Theme Park — with complimentary transfers included!\nDon’t miss the opportunity to get an extra 5% discount on top of existing offers when booking through the Legendary App!\nA vacation full of luxury, fun, and privileges is just a few taps away with the Legendary App!\nDownload the Legendary App now, book your stay using the coupon code you’ll get from the app, and enjoy both Rixos privileges and The Land of Legends Theme Park excitement together!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss out on this unique campaign!\n{{WIDGET name=appYukleButonlari}}\nCampaign Conditions:\n*This campaign is only valid for 2025 reservations at Rixos Park Belek and Rixos Downtown Antalya made via the Legendary App between July 9–December 31, 2025, using a coupon code obtained through the app.\n*Cannot be combined with other campaigns or special packages. Applies as an additional discount on top of all other offers.\n*The Land of Legends and Rixos Hotels reserve the right to change campaign conditions without prior notice.\n     - Exclusive on Legendary App: 10% Off Theme Park Tickets and Extras!: Special 10% Discount Theme Park Tickets and Extras Exclusive to the Legendary App!\nAll 2025 Theme Park tickets you purchase now through the Legendary App come with a 10% discount waiting for you.\nRefresh yourself in the cool waters of Aqua Land and Tropic Lagoon, dive into nonstop adventures at Adventure Land. Embark on a fun journey with SpongeBob SquarePants and friends in Nickelodeon Land, complete thrilling missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek™ universe!\nAll this awaits you at The Land of Legends Theme Park! Plus, enjoy an additional 10% discount on extras and experiences when you buy your tickets via the Legendary App!\nDon’t miss out on this legendary discount—download the Legendary App now and experience unforgettable moments at the Theme Park!\n{{WIDGET name=appYukleButonlari}}\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - 10% Discount On Theme Park Tickets!: 10% Off Theme Park Tickets!\nTake advantage of 10% off all 2025 Theme Park tickets you purchase now and enjoy an unforgettable experience filled with colorful slides and thrilling attractions!\nCool off in the refreshing waters of Aqua Land and Tropic Lagoon, or dive into non-stop adventures in Adventure Land.\nGo on a fun journey with SpongeBob and friends in Nickelodeon Land, complete exciting missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek universe!\nAll of this is waiting for you at The Land of Legends Theme Park!\n     - Hey Boy Hey Girl! Happy Birthday!: Free entry to Theme Park for children under 12(excluding 12 years) on their birthday.\n     - Corporate Partnerships: A 20% discount will be applied for employees of the institutions and associations with which we have agreements for Theme Park usage.\n20% CORPORATE DISCOUNT FOR EMPLOYEES OF ELIGIBLE INSTITUTIONS AND ASSOCIATIONS\nMINISTRY OF NATIONAL EDUCATION\nTURKISH ARMED FORCES\nMINISTRY OF INTERIOR\nGENERAL DIRECTORATE OF SECURITY\nFAMILIES OF MARTYRS AND VETERANS\nMINISTRY OF HEALTH\nANTALYA METROPOLITAN MUNICIPALITY\nMURATPAŞA MUNICIPALITY\nANTALYA RUSSIAN COMMUNITY ASSOCIATION\nFRESENIUS MEDICAL CARE\nLEVENT CHEMICALS\nCHAMBER OF MECHANICAL ENGINEERS\nANTALYA CHAMBER OF PHARMACISTS\nANTALYA PHARMACISTS' COOPERATIVE\nCHAMBER OF ELECTRICAL ENGINEERS – ANTALYA BRANCH\nCHAMBER OF CIVIL ENGINEERS – ANTALYA BRANCH\nANTALYA CHAMBER OF DENTISTS\nANTALYA MEDICAL CHAMBER\nBETA CONSTRUCTION-ALUMINUM-BUILDING WOODWORKS\nKONYAALTI MUNICIPALITY\nGENERAL DIRECTORATE OF HIGHWAYS\nEKDAĞ (SUBSIDIARY OF ANTALYA METROPOLITAN MUNICIPALITY)\nKEPEZ MUNICIPALITY\nHAVAŞ GROUND HANDLING SERVICES\nANTALYA REGIONAL DIRECTORATE OF AGRICULTURAL CREDIT COOPERATIVES\nDENİZBANK FENER BRANCH\nE.C.E MANAGEMENT OFFICE EMPLOYEES (MIGROS AND TERRACITY MANAGEMENT)\nDISTRICT GOVERNORATE OF MURATPAŞA\nOKYANUS COLLEGE STAFF\nBAHÇEŞEHİR COLLEGE STAFF\nİŞ INVESTMENT ANTALYA REGIONAL OFFICE\nFARMA BORSA DIGITAL INVESTMENT\nPRESS CARD HOLDERS – MEMBERS OF THE PRESS AND BROADCASTING INSTITUTIONS\nSUNEXPRESS EMPLOYEES\nANTALYA YOUNG BUSINESSPEOPLE ASSOCIATION (ANTGİAD)\nTHE LAND OF LEGENDS SHOPPING AVENUE STORE EMPLOYEES\nCW ENERGY\nTURKISH AIRLINES\nCOCA-COLA İÇECEK (CCI)\nUĞUR SCHOOLS\nZİRAAT BANK EMPLOYEES\nANKUTSAN EMPLOYEES\nAKBANK EMPLOYEES\nTGS GROUND SERVICES EMPLOYEES\nİHLAS HOLDING EMPLOYEES\nTURKNET EMPLOYEES\nANTALYA TOURIST GUIDES' ASSOCIATION\nTURKCELL EMPLOYEES\nMIGROS EMPLOYEES\nMAGNUM ICE CREAM COMPANY EMPLOYEES\nEMPLOYEES OF SABANCI GROUP COMPANIES (Enerjisa, Brisa, Kordsa, Çimsa, Akçansa, CarrefourSA, Teknosa, Yünsa, Aksigorta, Agesa, Temsa, SabancıDx, Exsa, Tursa)\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n\n--------------------\n\n🏨 OTEL: Rixos Premium Tekirova\n   Açıklama: During your holiday in the Rixos Sungate, you can enter the Land of Legends Theme Park free of charge and experience the adrenaline and fun to your heart’s content. You can easily get to The Land of Legends from Rixos Sungate with our free transfer service and experience an amazing day in the legendary atmosphere of The Land of Legends. The Theme Park where you will meet the high excitement, the Shopping Avenue offering the chance of shopping from world fashion brands, our famous restaurants offering gourmet delights and many more legendary experiences await you in The Land of Legends.\n   TEKLİFLER VE İNDİRİMLER:\n     - A delicious encounter awaits you on Legendary App!: Experience an unforgettable journey at Ala Akşam, located in the unique atmosphere of Shopping Avenue, with its stunning presentations and elegant, distinctive ambiance.\nEnjoy a 10% discount and indulge in an exceptional culinary adventure!\nDownload Legendary App now, get your Ala Akşam discount code, and treat yourself to exquisite flavors!\nAn unforgettable taste experience is just one click away!\nDownload Legendary App now and don’t miss this exclusive offer!\n{{WIDGET name=appYukleButonlari}}\n     - Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays!: Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays via the Legendary App!\nEnjoy all-inclusive stays at Rixos Downtown Antalya and Rixos Park Belek, and experience unlimited daily access to the legendary world of The Land of Legends Theme Park — with complimentary transfers included!\nDon’t miss the opportunity to get an extra 5% discount on top of existing offers when booking through the Legendary App!\nA vacation full of luxury, fun, and privileges is just a few taps away with the Legendary App!\nDownload the Legendary App now, book your stay using the coupon code you’ll get from the app, and enjoy both Rixos privileges and The Land of Legends Theme Park excitement together!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss out on this unique campaign!\n{{WIDGET name=appYukleButonlari}}\nCampaign Conditions:\n*This campaign is only valid for 2025 reservations at Rixos Park Belek and Rixos Downtown Antalya made via the Legendary App between July 9–December 31, 2025, using a coupon code obtained through the app.\n*Cannot be combined with other campaigns or special packages. Applies as an additional discount on top of all other offers.\n*The Land of Legends and Rixos Hotels reserve the right to change campaign conditions without prior notice.\n     - Exclusive on Legendary App: 10% Off Theme Park Tickets and Extras!: Special 10% Discount Theme Park Tickets and Extras Exclusive to the Legendary App!\nAll 2025 Theme Park tickets you purchase now through the Legendary App come with a 10% discount waiting for you.\nRefresh yourself in the cool waters of Aqua Land and Tropic Lagoon, dive into nonstop adventures at Adventure Land. Embark on a fun journey with SpongeBob SquarePants and friends in Nickelodeon Land, complete thrilling missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek™ universe!\nAll this awaits you at The Land of Legends Theme Park! Plus, enjoy an additional 10% discount on extras and experiences when you buy your tickets via the Legendary App!\nDon’t miss out on this legendary discount—download the Legendary App now and experience unforgettable moments at the Theme Park!\n{{WIDGET name=appYukleButonlari}}\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - 10% Discount On Theme Park Tickets!: 10% Off Theme Park Tickets!\nTake advantage of 10% off all 2025 Theme Park tickets you purchase now and enjoy an unforgettable experience filled with colorful slides and thrilling attractions!\nCool off in the refreshing waters of Aqua Land and Tropic Lagoon, or dive into non-stop adventures in Adventure Land.\nGo on a fun journey with SpongeBob and friends in Nickelodeon Land, complete exciting missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek universe!\nAll of this is waiting for you at The Land of Legends Theme Park!\n     - Hey Boy Hey Girl! Happy Birthday!: Free entry to Theme Park for children under 12(excluding 12 years) on their birthday.\n     - Corporate Partnerships: A 20% discount will be applied for employees of the institutions and associations with which we have agreements for Theme Park usage.\n20% CORPORATE DISCOUNT FOR EMPLOYEES OF ELIGIBLE INSTITUTIONS AND ASSOCIATIONS\nMINISTRY OF NATIONAL EDUCATION\nTURKISH ARMED FORCES\nMINISTRY OF INTERIOR\nGENERAL DIRECTORATE OF SECURITY\nFAMILIES OF MARTYRS AND VETERANS\nMINISTRY OF HEALTH\nANTALYA METROPOLITAN MUNICIPALITY\nMURATPAŞA MUNICIPALITY\nANTALYA RUSSIAN COMMUNITY ASSOCIATION\nFRESENIUS MEDICAL CARE\nLEVENT CHEMICALS\nCHAMBER OF MECHANICAL ENGINEERS\nANTALYA CHAMBER OF PHARMACISTS\nANTALYA PHARMACISTS' COOPERATIVE\nCHAMBER OF ELECTRICAL ENGINEERS – ANTALYA BRANCH\nCHAMBER OF CIVIL ENGINEERS – ANTALYA BRANCH\nANTALYA CHAMBER OF DENTISTS\nANTALYA MEDICAL CHAMBER\nBETA CONSTRUCTION-ALUMINUM-BUILDING WOODWORKS\nKONYAALTI MUNICIPALITY\nGENERAL DIRECTORATE OF HIGHWAYS\nEKDAĞ (SUBSIDIARY OF ANTALYA METROPOLITAN MUNICIPALITY)\nKEPEZ MUNICIPALITY\nHAVAŞ GROUND HANDLING SERVICES\nANTALYA REGIONAL DIRECTORATE OF AGRICULTURAL CREDIT COOPERATIVES\nDENİZBANK FENER BRANCH\nE.C.E MANAGEMENT OFFICE EMPLOYEES (MIGROS AND TERRACITY MANAGEMENT)\nDISTRICT GOVERNORATE OF MURATPAŞA\nOKYANUS COLLEGE STAFF\nBAHÇEŞEHİR COLLEGE STAFF\nİŞ INVESTMENT ANTALYA REGIONAL OFFICE\nFARMA BORSA DIGITAL INVESTMENT\nPRESS CARD HOLDERS – MEMBERS OF THE PRESS AND BROADCASTING INSTITUTIONS\nSUNEXPRESS EMPLOYEES\nANTALYA YOUNG BUSINESSPEOPLE ASSOCIATION (ANTGİAD)\nTHE LAND OF LEGENDS SHOPPING AVENUE STORE EMPLOYEES\nCW ENERGY\nTURKISH AIRLINES\nCOCA-COLA İÇECEK (CCI)\nUĞUR SCHOOLS\nZİRAAT BANK EMPLOYEES\nANKUTSAN EMPLOYEES\nAKBANK EMPLOYEES\nTGS GROUND SERVICES EMPLOYEES\nİHLAS HOLDING EMPLOYEES\nTURKNET EMPLOYEES\nANTALYA TOURIST GUIDES' ASSOCIATION\nTURKCELL EMPLOYEES\nMIGROS EMPLOYEES\nMAGNUM ICE CREAM COMPANY EMPLOYEES\nEMPLOYEES OF SABANCI GROUP COMPANIES (Enerjisa, Brisa, Kordsa, Çimsa, Akçansa, CarrefourSA, Teknosa, Yünsa, Aksigorta, Agesa, Temsa, SabancıDx, Exsa, Tursa)\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n\n--------------------\n\n🏨 OTEL: Rixos Sungate\n   Açıklama: During your holiday in the Rixos Sungate, you can enter the Land of Legends Theme Park free of charge and experience the adrenaline and fun to your heart’s content. You can easily get to The Land of Legends from Rixos Sungate with our free transfer service and experience an amazing day in the legendary atmosphere of The Land of Legends. The Theme Park where you will meet the high excitement, the Shopping Avenue offering the chance of shopping from world fashion brands, our famous restaurants offering gourmet delights and many more legendary experiences await you in The Land of Legends.\n   TEKLİFLER VE İNDİRİMLER:\n     - A delicious encounter awaits you on Legendary App!: Experience an unforgettable journey at Ala Akşam, located in the unique atmosphere of Shopping Avenue, with its stunning presentations and elegant, distinctive ambiance.\nEnjoy a 10% discount and indulge in an exceptional culinary adventure!\nDownload Legendary App now, get your Ala Akşam discount code, and treat yourself to exquisite flavors!\nAn unforgettable taste experience is just one click away!\nDownload Legendary App now and don’t miss this exclusive offer!\n{{WIDGET name=appYukleButonlari}}\n     - Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays!: Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays via the Legendary App!\nEnjoy all-inclusive stays at Rixos Downtown Antalya and Rixos Park Belek, and experience unlimited daily access to the legendary world of The Land of Legends Theme Park — with complimentary transfers included!\nDon’t miss the opportunity to get an extra 5% discount on top of existing offers when booking through the Legendary App!\nA vacation full of luxury, fun, and privileges is just a few taps away with the Legendary App!\nDownload the Legendary App now, book your stay using the coupon code you’ll get from the app, and enjoy both Rixos privileges and The Land of Legends Theme Park excitement together!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss out on this unique campaign!\n{{WIDGET name=appYukleButonlari}}\nCampaign Conditions:\n*This campaign is only valid for 2025 reservations at Rixos Park Belek and Rixos Downtown Antalya made via the Legendary App between July 9–December 31, 2025, using a coupon code obtained through the app.\n*Cannot be combined with other campaigns or special packages. Applies as an additional discount on top of all other offers.\n*The Land of Legends and Rixos Hotels reserve the right to change campaign conditions without prior notice.\n     - Exclusive on Legendary App: 10% Off Theme Park Tickets and Extras!: Special 10% Discount Theme Park Tickets and Extras Exclusive to the Legendary App!\nAll 2025 Theme Park tickets you purchase now through the Legendary App come with a 10% discount waiting for you.\nRefresh yourself in the cool waters of Aqua Land and Tropic Lagoon, dive into nonstop adventures at Adventure Land. Embark on a fun journey with SpongeBob SquarePants and friends in Nickelodeon Land, complete thrilling missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek™ universe!\nAll this awaits you at The Land of Legends Theme Park! Plus, enjoy an additional 10% discount on extras and experiences when you buy your tickets via the Legendary App!\nDon’t miss out on this legendary discount—download the Legendary App now and experience unforgettable moments at the Theme Park!\n{{WIDGET name=appYukleButonlari}}\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - 10% Discount On Theme Park Tickets!: 10% Off Theme Park Tickets!\nTake advantage of 10% off all 2025 Theme Park tickets you purchase now and enjoy an unforgettable experience filled with colorful slides and thrilling attractions!\nCool off in the refreshing waters of Aqua Land and Tropic Lagoon, or dive into non-stop adventures in Adventure Land.\nGo on a fun journey with SpongeBob and friends in Nickelodeon Land, complete exciting missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek universe!\nAll of this is waiting for you at The Land of Legends Theme Park!\n     - Hey Boy Hey Girl! Happy Birthday!: Free entry to Theme Park for children under 12(excluding 12 years) on their birthday.\n     - Corporate Partnerships: A 20% discount will be applied for employees of the institutions and associations with which we have agreements for Theme Park usage.\n20% CORPORATE DISCOUNT FOR EMPLOYEES OF ELIGIBLE INSTITUTIONS AND ASSOCIATIONS\nMINISTRY OF NATIONAL EDUCATION\nTURKISH ARMED FORCES\nMINISTRY OF INTERIOR\nGENERAL DIRECTORATE OF SECURITY\nFAMILIES OF MARTYRS AND VETERANS\nMINISTRY OF HEALTH\nANTALYA METROPOLITAN MUNICIPALITY\nMURATPAŞA MUNICIPALITY\nANTALYA RUSSIAN COMMUNITY ASSOCIATION\nFRESENIUS MEDICAL CARE\nLEVENT CHEMICALS\nCHAMBER OF MECHANICAL ENGINEERS\nANTALYA CHAMBER OF PHARMACISTS\nANTALYA PHARMACISTS' COOPERATIVE\nCHAMBER OF ELECTRICAL ENGINEERS – ANTALYA BRANCH\nCHAMBER OF CIVIL ENGINEERS – ANTALYA BRANCH\nANTALYA CHAMBER OF DENTISTS\nANTALYA MEDICAL CHAMBER\nBETA CONSTRUCTION-ALUMINUM-BUILDING WOODWORKS\nKONYAALTI MUNICIPALITY\nGENERAL DIRECTORATE OF HIGHWAYS\nEKDAĞ (SUBSIDIARY OF ANTALYA METROPOLITAN MUNICIPALITY)\nKEPEZ MUNICIPALITY\nHAVAŞ GROUND HANDLING SERVICES\nANTALYA REGIONAL DIRECTORATE OF AGRICULTURAL CREDIT COOPERATIVES\nDENİZBANK FENER BRANCH\nE.C.E MANAGEMENT OFFICE EMPLOYEES (MIGROS AND TERRACITY MANAGEMENT)\nDISTRICT GOVERNORATE OF MURATPAŞA\nOKYANUS COLLEGE STAFF\nBAHÇEŞEHİR COLLEGE STAFF\nİŞ INVESTMENT ANTALYA REGIONAL OFFICE\nFARMA BORSA DIGITAL INVESTMENT\nPRESS CARD HOLDERS – MEMBERS OF THE PRESS AND BROADCASTING INSTITUTIONS\nSUNEXPRESS EMPLOYEES\nANTALYA YOUNG BUSINESSPEOPLE ASSOCIATION (ANTGİAD)\nTHE LAND OF LEGENDS SHOPPING AVENUE STORE EMPLOYEES\nCW ENERGY\nTURKISH AIRLINES\nCOCA-COLA İÇECEK (CCI)\nUĞUR SCHOOLS\nZİRAAT BANK EMPLOYEES\nANKUTSAN EMPLOYEES\nAKBANK EMPLOYEES\nTGS GROUND SERVICES EMPLOYEES\nİHLAS HOLDING EMPLOYEES\nTURKNET EMPLOYEES\nANTALYA TOURIST GUIDES' ASSOCIATION\nTURKCELL EMPLOYEES\nMIGROS EMPLOYEES\nMAGNUM ICE CREAM COMPANY EMPLOYEES\nEMPLOYEES OF SABANCI GROUP COMPANIES (Enerjisa, Brisa, Kordsa, Çimsa, Akçansa, CarrefourSA, Teknosa, Yünsa, Aksigorta, Agesa, Temsa, SabancıDx, Exsa, Tursa)\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n\n--------------------\n\n🏨 OTEL: Club Prive By Rixos Belek\n   Açıklama: Nestled within the pine and on the shores of the Mediterranean coast is Club Privé By Rixos Belek. Belek's beautiful scenery creates a destination full of natural beauty on the Turkish Riviera. Surrounded by magnificent gardens, the contrast of the cerulean blue waters and the lush green gardens creates a splendid resort. Club Privé By Rixos Belek offers the All Inclusive – All Exclusive experience. Secluded away from the main resort within its own gated, private gardens, the villas boast private pools, tranquil terraces and a host of exclusive privileges available only to Club Privé By Rixos Belek guests. The Club Privé By Rixos Belek Butlers ensure no detail of your stay goes unchecked. Private pavilions on the endless sandy beach make for lazy days. The Privé Concierge is on hand to make any necessary arrangements, including private yacht hire if you wish to venture along the coast. You could seek out secluded sandy coves with a picnic lunch prepared by our culinary team, or celebrate a milestone birthday on board, arranged by our events team. Staying at the Rixos Premium Belek offers more than the perfect accommodation: a beautiful kilometre long beach, delicious food and superior service, restaurants with luxurious buffets, pools, world-class entertainment all await for your ultimate holiday experience at the Rixos Premium Belek. Club Privé By Rixos Belek is located 40 kilometres from Antalya International Airport, and guests receive complimentary airport transfers. The property is also 50 kilometres from Antalya city centre, and 5 kilometres from Belek city centre.\n   TEKLİFLER VE İNDİRİMLER:\n     - A delicious encounter awaits you on Legendary App!: Experience an unforgettable journey at Ala Akşam, located in the unique atmosphere of Shopping Avenue, with its stunning presentations and elegant, distinctive ambiance.\nEnjoy a 10% discount and indulge in an exceptional culinary adventure!\nDownload Legendary App now, get your Ala Akşam discount code, and treat yourself to exquisite flavors!\nAn unforgettable taste experience is just one click away!\nDownload Legendary App now and don’t miss this exclusive offer!\n{{WIDGET name=appYukleButonlari}}\n     - Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays!: Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays via the Legendary App!\nEnjoy all-inclusive stays at Rixos Downtown Antalya and Rixos Park Belek, and experience unlimited daily access to the legendary world of The Land of Legends Theme Park — with complimentary transfers included!\nDon’t miss the opportunity to get an extra 5% discount on top of existing offers when booking through the Legendary App!\nA vacation full of luxury, fun, and privileges is just a few taps away with the Legendary App!\nDownload the Legendary App now, book your stay using the coupon code you’ll get from the app, and enjoy both Rixos privileges and The Land of Legends Theme Park excitement together!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss out on this unique campaign!\n{{WIDGET name=appYukleButonlari}}\nCampaign Conditions:\n*This campaign is only valid for 2025 reservations at Rixos Park Belek and Rixos Downtown Antalya made via the Legendary App between July 9–December 31, 2025, using a coupon code obtained through the app.\n*Cannot be combined with other campaigns or special packages. Applies as an additional discount on top of all other offers.\n*The Land of Legends and Rixos Hotels reserve the right to change campaign conditions without prior notice.\n     - Exclusive on Legendary App: 10% Off Theme Park Tickets and Extras!: Special 10% Discount Theme Park Tickets and Extras Exclusive to the Legendary App!\nAll 2025 Theme Park tickets you purchase now through the Legendary App come with a 10% discount waiting for you.\nRefresh yourself in the cool waters of Aqua Land and Tropic Lagoon, dive into nonstop adventures at Adventure Land. Embark on a fun journey with SpongeBob SquarePants and friends in Nickelodeon Land, complete thrilling missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek™ universe!\nAll this awaits you at The Land of Legends Theme Park! Plus, enjoy an additional 10% discount on extras and experiences when you buy your tickets via the Legendary App!\nDon’t miss out on this legendary discount—download the Legendary App now and experience unforgettable moments at the Theme Park!\n{{WIDGET name=appYukleButonlari}}\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - 10% Discount On Theme Park Tickets!: 10% Off Theme Park Tickets!\nTake advantage of 10% off all 2025 Theme Park tickets you purchase now and enjoy an unforgettable experience filled with colorful slides and thrilling attractions!\nCool off in the refreshing waters of Aqua Land and Tropic Lagoon, or dive into non-stop adventures in Adventure Land.\nGo on a fun journey with SpongeBob and friends in Nickelodeon Land, complete exciting missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek universe!\nAll of this is waiting for you at The Land of Legends Theme Park!\n     - Hey Boy Hey Girl! Happy Birthday!: Free entry to Theme Park for children under 12(excluding 12 years) on their birthday.\n     - Corporate Partnerships: A 20% discount will be applied for employees of the institutions and associations with which we have agreements for Theme Park usage.\n20% CORPORATE DISCOUNT FOR EMPLOYEES OF ELIGIBLE INSTITUTIONS AND ASSOCIATIONS\nMINISTRY OF NATIONAL EDUCATION\nTURKISH ARMED FORCES\nMINISTRY OF INTERIOR\nGENERAL DIRECTORATE OF SECURITY\nFAMILIES OF MARTYRS AND VETERANS\nMINISTRY OF HEALTH\nANTALYA METROPOLITAN MUNICIPALITY\nMURATPAŞA MUNICIPALITY\nANTALYA RUSSIAN COMMUNITY ASSOCIATION\nFRESENIUS MEDICAL CARE\nLEVENT CHEMICALS\nCHAMBER OF MECHANICAL ENGINEERS\nANTALYA CHAMBER OF PHARMACISTS\nANTALYA PHARMACISTS' COOPERATIVE\nCHAMBER OF ELECTRICAL ENGINEERS – ANTALYA BRANCH\nCHAMBER OF CIVIL ENGINEERS – ANTALYA BRANCH\nANTALYA CHAMBER OF DENTISTS\nANTALYA MEDICAL CHAMBER\nBETA CONSTRUCTION-ALUMINUM-BUILDING WOODWORKS\nKONYAALTI MUNICIPALITY\nGENERAL DIRECTORATE OF HIGHWAYS\nEKDAĞ (SUBSIDIARY OF ANTALYA METROPOLITAN MUNICIPALITY)\nKEPEZ MUNICIPALITY\nHAVAŞ GROUND HANDLING SERVICES\nANTALYA REGIONAL DIRECTORATE OF AGRICULTURAL CREDIT COOPERATIVES\nDENİZBANK FENER BRANCH\nE.C.E MANAGEMENT OFFICE EMPLOYEES (MIGROS AND TERRACITY MANAGEMENT)\nDISTRICT GOVERNORATE OF MURATPAŞA\nOKYANUS COLLEGE STAFF\nBAHÇEŞEHİR COLLEGE STAFF\nİŞ INVESTMENT ANTALYA REGIONAL OFFICE\nFARMA BORSA DIGITAL INVESTMENT\nPRESS CARD HOLDERS – MEMBERS OF THE PRESS AND BROADCASTING INSTITUTIONS\nSUNEXPRESS EMPLOYEES\nANTALYA YOUNG BUSINESSPEOPLE ASSOCIATION (ANTGİAD)\nTHE LAND OF LEGENDS SHOPPING AVENUE STORE EMPLOYEES\nCW ENERGY\nTURKISH AIRLINES\nCOCA-COLA İÇECEK (CCI)\nUĞUR SCHOOLS\nZİRAAT BANK EMPLOYEES\nANKUTSAN EMPLOYEES\nAKBANK EMPLOYEES\nTGS GROUND SERVICES EMPLOYEES\nİHLAS HOLDING EMPLOYEES\nTURKNET EMPLOYEES\nANTALYA TOURIST GUIDES' ASSOCIATION\nTURKCELL EMPLOYEES\nMIGROS EMPLOYEES\nMAGNUM ICE CREAM COMPANY EMPLOYEES\nEMPLOYEES OF SABANCI GROUP COMPANIES (Enerjisa, Brisa, Kordsa, Çimsa, Akçansa, CarrefourSA, Teknosa, Yünsa, Aksigorta, Agesa, Temsa, SabancıDx, Exsa, Tursa)\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n\n--------------------\n\n🏨 OTEL: Tui Magic Life Rixos Beldibi +16\n   Açıklama: We look forward to welcoming you to Rixos Beldibi so that you can experience the serene nature of Beldibi and experience a wonderful holiday with the comfort of Rixos. Enjoy a different holiday with Rixos Beldibi with its 45,000 m2 of splendid architecture, 275 metre long private beach and exclusive services. During your holiday in the Rixos Beldibi, you can enter the Land of Legends Theme Park free of charge and experience the adrenaline and fun to your heart’s content. You can easily get to The Land of Legends from Rixos Beldibi with our free transfer service and experience an amazing day in the legendary atmosphere of The Land of Legends. The Theme Park where you will meet the high excitement, the Shopping Avenue offering the chance of shopping from world fashion brands, our famous restaurants offering gourmet delights and many more legendary experiences await you in The Land of Legends.\n   TEKLİFLER VE İNDİRİMLER:\n     - A delicious encounter awaits you on Legendary App!: Experience an unforgettable journey at Ala Akşam, located in the unique atmosphere of Shopping Avenue, with its stunning presentations and elegant, distinctive ambiance.\nEnjoy a 10% discount and indulge in an exceptional culinary adventure!\nDownload Legendary App now, get your Ala Akşam discount code, and treat yourself to exquisite flavors!\nAn unforgettable taste experience is just one click away!\nDownload Legendary App now and don’t miss this exclusive offer!\n{{WIDGET name=appYukleButonlari}}\n     - Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays!: Legendary Coupon Exclusive to Rixos Park Belek and Rixos Downtown Antalya Stays via the Legendary App!\nEnjoy all-inclusive stays at Rixos Downtown Antalya and Rixos Park Belek, and experience unlimited daily access to the legendary world of The Land of Legends Theme Park — with complimentary transfers included!\nDon’t miss the opportunity to get an extra 5% discount on top of existing offers when booking through the Legendary App!\nA vacation full of luxury, fun, and privileges is just a few taps away with the Legendary App!\nDownload the Legendary App now, book your stay using the coupon code you’ll get from the app, and enjoy both Rixos privileges and The Land of Legends Theme Park excitement together!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss out on this unique campaign!\n{{WIDGET name=appYukleButonlari}}\nCampaign Conditions:\n*This campaign is only valid for 2025 reservations at Rixos Park Belek and Rixos Downtown Antalya made via the Legendary App between July 9–December 31, 2025, using a coupon code obtained through the app.\n*Cannot be combined with other campaigns or special packages. Applies as an additional discount on top of all other offers.\n*The Land of Legends and Rixos Hotels reserve the right to change campaign conditions without prior notice.\n     - Exclusive on Legendary App: 10% Off Theme Park Tickets and Extras!: Special 10% Discount Theme Park Tickets and Extras Exclusive to the Legendary App!\nAll 2025 Theme Park tickets you purchase now through the Legendary App come with a 10% discount waiting for you.\nRefresh yourself in the cool waters of Aqua Land and Tropic Lagoon, dive into nonstop adventures at Adventure Land. Embark on a fun journey with SpongeBob SquarePants and friends in Nickelodeon Land, complete thrilling missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek™ universe!\nAll this awaits you at The Land of Legends Theme Park! Plus, enjoy an additional 10% discount on extras and experiences when you buy your tickets via the Legendary App!\nDon’t miss out on this legendary discount—download the Legendary App now and experience unforgettable moments at the Theme Park!\n{{WIDGET name=appYukleButonlari}}\n     - Enjoy Extra 5% Off on Stays with the Legendary App!: Catch an extra 5% discount on all 2025 Kingdom Hotel and Nickelodeon Hotels & Resorts Antalya bookings by downloading the Legendary App! Make your 2025 holiday even more advantageous with the discount code you’ll get through the Legendary App.\nAn unforgettable holiday experience awaits you with the colorful designs of Kingdom Hotel and the Nickelodeon character-themed rooms of Nickelodeon Hotels & Resorts Antalya!\nUse your coupon code from the Legendary App now to make your reservation and don’t miss this legendary experience!\nGetting Your Coupon Code is Super Easy!\nDownload the Legendary App.\nAfter registering, go to the “News” section and get your coupon code.\nDuring your reservation, select “Discount Code” and enter the code in the “Add Code” section to enjoy the 5% discount!\nBecome a member of the Legendary App now, join us, and don’t miss this unique campaign!\n{{WIDGET name=appYukleButonlari}}\n     - 10% Discount On Theme Park Tickets!: 10% Off Theme Park Tickets!\nTake advantage of 10% off all 2025 Theme Park tickets you purchase now and enjoy an unforgettable experience filled with colorful slides and thrilling attractions!\nCool off in the refreshing waters of Aqua Land and Tropic Lagoon, or dive into non-stop adventures in Adventure Land.\nGo on a fun journey with SpongeBob and friends in Nickelodeon Land, complete exciting missions with the PAW Patrol crew, and join an unforgettable space adventure in the Star Trek universe!\nAll of this is waiting for you at The Land of Legends Theme Park!\n     - Hey Boy Hey Girl! Happy Birthday!: Free entry to Theme Park for children under 12(excluding 12 years) on their birthday.\n     - Corporate Partnerships: A 20% discount will be applied for employees of the institutions and associations with which we have agreements for Theme Park usage.\n20% CORPORATE DISCOUNT FOR EMPLOYEES OF ELIGIBLE INSTITUTIONS AND ASSOCIATIONS\nMINISTRY OF NATIONAL EDUCATION\nTURKISH ARMED FORCES\nMINISTRY OF INTERIOR\nGENERAL DIRECTORATE OF SECURITY\nFAMILIES OF MARTYRS AND VETERANS\nMINISTRY OF HEALTH\nANTALYA METROPOLITAN MUNICIPALITY\nMURATPAŞA MUNICIPALITY\nANTALYA RUSSIAN COMMUNITY ASSOCIATION\nFRESENIUS MEDICAL CARE\nLEVENT CHEMICALS\nCHAMBER OF MECHANICAL ENGINEERS\nANTALYA CHAMBER OF PHARMACISTS\nANTALYA PHARMACISTS' COOPERATIVE\nCHAMBER OF ELECTRICAL ENGINEERS – ANTALYA BRANCH\nCHAMBER OF CIVIL ENGINEERS – ANTALYA BRANCH\nANTALYA CHAMBER OF DENTISTS\nANTALYA MEDICAL CHAMBER\nBETA CONSTRUCTION-ALUMINUM-BUILDING WOODWORKS\nKONYAALTI MUNICIPALITY\nGENERAL DIRECTORATE OF HIGHWAYS\nEKDAĞ (SUBSIDIARY OF ANTALYA METROPOLITAN MUNICIPALITY)\nKEPEZ MUNICIPALITY\nHAVAŞ GROUND HANDLING SERVICES\nANTALYA REGIONAL DIRECTORATE OF AGRICULTURAL CREDIT COOPERATIVES\nDENİZBANK FENER BRANCH\nE.C.E MANAGEMENT OFFICE EMPLOYEES (MIGROS AND TERRACITY MANAGEMENT)\nDISTRICT GOVERNORATE OF MURATPAŞA\nOKYANUS COLLEGE STAFF\nBAHÇEŞEHİR COLLEGE STAFF\nİŞ INVESTMENT ANTALYA REGIONAL OFFICE\nFARMA BORSA DIGITAL INVESTMENT\nPRESS CARD HOLDERS – MEMBERS OF THE PRESS AND BROADCASTING INSTITUTIONS\nSUNEXPRESS EMPLOYEES\nANTALYA YOUNG BUSINESSPEOPLE ASSOCIATION (ANTGİAD)\nTHE LAND OF LEGENDS SHOPPING AVENUE STORE EMPLOYEES\nCW ENERGY\nTURKISH AIRLINES\nCOCA-COLA İÇECEK (CCI)\nUĞUR SCHOOLS\nZİRAAT BANK EMPLOYEES\nANKUTSAN EMPLOYEES\nAKBANK EMPLOYEES\nTGS GROUND SERVICES EMPLOYEES\nİHLAS HOLDING EMPLOYEES\nTURKNET EMPLOYEES\nANTALYA TOURIST GUIDES' ASSOCIATION\nTURKCELL EMPLOYEES\nMIGROS EMPLOYEES\nMAGNUM ICE CREAM COMPANY EMPLOYEES\nEMPLOYEES OF SABANCI GROUP COMPANIES (Enerjisa, Brisa, Kordsa, Çimsa, Akçansa, CarrefourSA, Teknosa, Yünsa, Aksigorta, Agesa, Temsa, SabancıDx, Exsa, Tursa)\n     - DREAM STAY: Book 4 nights at The Land of Legends Kingdom Hotel via Legendary App or thelandoflegends.com and enjoy unique privileges!\n• Fast Track privileges throughout your stay*,\n• Masha and The Bear Meet & Greet**\n• A family photo shoot!***\nYour dream holiday is now more special and exclusive!\nBook now and be a part of the legends!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Dolphin Meet & Greet experience**\n• Canal Tour***\n• Masha and the Bear Meet & Greet****\n• A family photo shoot*****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legends!\n     - Legendary Birthday: Book a 4-night stay or more at The Land of Legends Kingdom Hotel through the Legendary App or thelandoflegends.com and enjoy a birthday experience filled with unique privileges!\nWhat’s waiting for you?\n• Surprises that await you in your private room, ready to make every moment even more special.\n• An unforgettable celebration with a 4-person Masha and the Bear-themed birthday cake\n• A delicious celebration menu at Eternia Restaurant accompanied by Magic Chef’s laughter-filled interactive kitchen show, and a professional photo shoot full of surprises*\n• A free Canal Tour with your family**\n• A Dolphin Meet & Greet experience with your family on the birthday***\n• Fast Track privilege for the entire family at the Theme Park, valid only on the birthday****\n•      Masha & The Bear Meet & Greet *****\nYour dream birthday is now even more special, even more legendary!\nBook now and be a part of this unforgettable celebration!\n     - DREAM STAY: Book a 4-night stay at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Meet & Greet with Nickelodeon Characters**\n• A family photo shoot***\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n     - ULTIMATE STAY: Book a 5-night stay or more at The Land of Legends Nickelodeon Hotels & Resorts Antalya through the Legendary App or thelandoflegends.com and enjoy exclusive privileges!\n• Free Fast Track access throughout your stay*\n• Canal Tour**\n• Nickelodeon Meet & Greet***\n• A family photo shoot****\nYour dream holiday is now even more special and exclusive!\nBook now and be a part of the legend!\n\n--------------------\n\n",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "tool",
+        "name": null,
+        "id": null,
+        "tool_call_id": "ebe89f92-8c1d-4af7-92ec-446f56fb66a2",
+        "artifact": null,
+        "status": "success"
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "The Land of Legends'taki Nickelodeon Hotels & Resorts Antalya hakkında bilgi:\n\n**Nickelodeon Hotels & Resorts Antalya**\nRenkli karakterlerle dolu bir dünyaya adım atmaya hazır mısınız? Her detayın özenle tasarlandığı Fullboard+ konseptiyle, Nickelodeon Hotels & Resorts Antalya'daki konaklamanızı gerçekten unutulmaz kılıyoruz. SüngerBob KareŞort, Dora, PAW Patrol, Ninja Kaplumbağalar ve Star Trek™'ten ilham alan özel temalı odalarda eğlence her zaman sizinle. Çocuklar için Club Nick, temalı havuzlar, spa, Türk hamamı ve fitness merkezi gibi ayrıcalıklı alanlarla tatilinizi konfor ve neşeyle tamamlıyoruz. Lezzetli kahvaltı, öğle yemeği ve akşam yemeğine ek olarak, Nickelodeon All Star Cafe, Le Spatula, Snick Lounge ve Rainforest Juice Bar gibi yemek mekanlarımızla konaklamanıza lezzet katmaya hazırız. Her yaşa uygun sürprizler ve aktivitelerle dolu bu canlı atmosferde kendi hikayenizi yaratın! Nickelodeon Hotels & Resorts Antalya rezervasyonları için anlaşmalı kredi kartlarına özel taksit seçenekleri mevcuttur.\n\n**Ayrıcalıklar:**\n*   **Efsanevi Doğum Günü Teklifi:** Doğum günleri The Land of Legends'ta unutulmaz anılara dönüşüyor! Kingdom Hotel ve Nickelodeon Hotels & Resorts Antalya'nın tüm misafirlerine sunulan bu özel paketten yararlananları eşsiz bir doğum günü deneyimi bekliyor. Doğum günü heyecanınız eğlence dolu anlar, sürprizler ve özel dokunuşlarla beslenecek! Bu eşsiz atmosferde sevdiklerinizle harika anılar biriktirin ve doğum gününüzü Efsanevi bir şekilde kutlayın!\n*   **Rixos Premium Belek Ayrıcalığı:** The Land of Legends'a özel efsanevi deneyimlere ek olarak, Nickelodeon Hotels & Resorts Antalya'da konaklayan tüm misafirler, özel servis hizmetiyle Rixos Premium Belek'in muhteşem deniz ve plajına ücretsiz erişimin keyfini çıkarabilirler. Servis Saatleri: 13:00 - 16:30\n*   **FULLBOARD+:** Le Spatula'da kahvaltı, öğle yemeği ve akşam yemeği için çeşitli lezzetlerle tüm gün açık büfenin tadını çıkarın. Konaklamanız boyunca, istediğiniz zaman Lobby Bar'dan alkolsüz içeceklerinizi alın ve konaklamanızın tadını çıkarın! Açılış Saatleri: 07:00–11:00, 12:30–14:30, 18:30–21:30. FULLBOARD+ konseptine dahildir.\n*   **Lobby Bar:** Misafirler, giriş veya çıkış yaparken Lobby Bar'da dinlenebilir veya gün içinde terasın tadını çıkarmak ve lezzetli içeceklerimizin tadını çıkarmak için uğrayabilirler. Açılış Saatleri: 7/24. FULLBOARD+ konseptine dahildir.\n*   **Tema Parkı Erişim Ayrıcalığı!:** Nickelodeon Hotels & Resorts Antalya veya The Kingdom Hotel'de mi kalıyorsunuz? O zaman hazır olun - tema parkı biletleri için endişelenmenize gerek yok! Bizimle kaldığınız sürece, tüm o destansı su kaydırakları, çılgın roller coaster'lar ve çok daha fazlası sizi ücretsiz bekliyor. Bilekliğinizi gösterin ve macera başlasın! Açılış Saatleri: Adventure Land: 10:00 - 17:00, Aqua Land: 10:00 - 17:00, Nickelodeon Land: 10:00 - 19:00 (Hafta içi), 10:00 - 21:00 (Hafta sonu).\n\n**Teklifler ve İndirimler:**\n*   **Efsanevi Uygulama ile Konaklamalarda Ek %5 İndirimden Yararlanın!:** Legendary Uygulamasını indirerek tüm 2025 Kingdom Hotel ve Nickelodeon Hotels & Resorts Antalya rezervasyonlarında ek %5 indirim yakalayın! Legendary Uygulaması üzerinden alacağınız indirim koduyla 2025 tatilinizi daha da avantajlı hale getirin.\n*   **RÜYA KONAKLAMA:** The Land of Legends Nickelodeon Hotels & Resorts Antalya'da Legendary Uygulaması veya thelandoflegends.com üzerinden 4 gecelik konaklama rezervasyonu yapın ve özel ayrıcalıklardan yararlanın! Konaklamanız boyunca ücretsiz Fast Track erişimi, Nickelodeon Karakterleri ile Tanışma ve Selamlaşma, Aile fotoğraf çekimi.\n*   **ULTIMATE KONAKLAMA:** The Land of Legends Nickelodeon Hotels & Resorts Antalya'da Legendary Uygulaması veya thelandoflegends.com üzerinden 5 gece veya daha fazla konaklama rezervasyonu yapın ve özel ayrıcalıklardan yararlanın! Konaklamanız boyunca ücretsiz Fast Track erişimi, Kanal Turu, Nickelodeon Karakterleri ile Tanışma ve Selamlaşma, Aile fotoğraf çekimi.\n*   **Efsanevi Doğum Günü:** The Land of Legends Nickelodeon Hotels & Resorts Antalya'da Legendary Uygulaması veya thelandoflegends.com üzerinden 4 gece veya daha fazla konaklama rezervasyonu yapın ve eşsiz ayrıcalıklarla dolu bir doğum günü deneyiminin tadını çıkarın! Özel odanızda sizi bekleyen sürprizler, Nickelodeon karakter temalı 4 kişilik doğum günü pastası ile unutulmaz bir kutlama, Le Spatula'daki kutlama sırasında Nickelodeon karakterleriyle profesyonel fotoğraf çekimi, ailenizle ücretsiz Kanal Turu, doğum gününde tüm aile için Tema Parkı'nda Fast Track ayrıcalığı, Nickelodeon Karakterleri ile Tanışma ve Selamlaşma.\n\nBaşka bir konuda yardımcı olabilir miyim?",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--dd29da73-47cd-45ac-b89f-eea4fb87c980-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 22996,
+          "output_tokens": 1383,
+          "total_tokens": 24379,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 60
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "kısaltır mıısn",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Elbette, Nickelodeon Hotels & Resorts Antalya hakkında kısa bilgi:\n\nNickelodeon Hotels & Resorts Antalya, SüngerBob, PAW Patrol gibi karakter temalı odalarıyla eğlence dolu bir konaklama sunar. Fullboard+ konseptiyle yeme içme imkanları, çocuk kulübü, havuzlar, spa gibi olanaklar mevcuttur.\n\n**Ayrıcalıklar:**\n*   Doğum günü teklifleri\n*   Rixos Premium Belek'in deniz ve plajına ücretsiz erişim (servis ile)\n*   Fullboard+ konseptiyle açık büfe ve Lobby Bar hizmeti\n*   Tema Parkı'na ücretsiz ve sınırsız erişim\n\n**Teklifler ve İndirimler:**\n*   Legendary Uygulaması üzerinden yapılan rezervasyonlarda ek %5 indirim\n*   4 veya 5 gece ve üzeri konaklamalarda Fast Track, karakter buluşmaları, aile fotoğraf çekimi ve Kanal Turu gibi özel ayrıcalıklar.\n\nBaşka bir konuda yardımcı olabilir miyim?",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--0c2019f3-fc7b-4bfc-84a8-b73d9fb09832-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 24328,
+          "output_tokens": 266,
+          "total_tokens": 24594,
+          "input_token_details": {
+            "cache_read": 0
+          },
+          "output_token_details": {
+            "reasoning": 36
+          }
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "Ich habe Hunger, Nick. Welche Restaurants gibt es im Hotel?",
+        "additional_kwargs": {},
+        "response_metadata": {},
+        "type": "human",
+        "name": null,
+        "id": null,
+        "example": false
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Im Nickelodeon Hotels & Resorts Antalya gibt es folgende Restaurants und Bars, die Ihren Aufenthalt kulinarisch bereichern:\n\n*   **Nickelodeon All Star Cafe**\n*   **Le Spatula** (Hier gibt es Frühstück, Mittag- und Abendessen im offenen Buffet mit dem Fullboard+ Konzept.)\n*   **Snick Lounge**\n*   **Rainforest Juice Bar**\n*   **Lobby Bar** (Hier können Sie jederzeit Softdrinks erhalten.)\n\nIch hoffe, das hilft Ihnen bei der Auswahl!",
+        "additional_kwargs": {},
+        "response_metadata": {
+          "prompt_feedback": {
+            "block_reason": 0,
+            "safety_ratings": []
+          },
+          "finish_reason": "STOP",
+          "model_name": "gemini-2.5-flash",
+          "safety_ratings": []
+        },
+        "type": "ai",
+        "name": null,
+        "id": "run--af4ecbde-dcbc-491e-a613-734140d9fcac-0",
+        "example": false,
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "usage_metadata": {
+          "input_tokens": 24573,
+          "output_tokens": 246,
+          "total_tokens": 24819,
+          "input_token_details": {
+            "cache_read": 24037
+          },
+          "output_token_details": {
+            "reasoning": 139
+          }
+        }
+      }
+    }
+  ]
+}

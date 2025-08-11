@@ -10,31 +10,36 @@ from langchain_core.messages import BaseMessage, AIMessage, ToolMessage
 from langchain.chat_models import init_chat_model
 from langgraph.graph import StateGraph, END
 from langchain_tavily import TavilySearch
+from tools.custom_tools import (
+    get_landoflegends_events, get_current_time, get_hotel_info, get_park_units,
+    start_ticket_booking, update_ticket_details, finalize_ticket_booking,
+    show_image
+)
 
-# Yerel importları geri getiriyoruz.
-from tools.custom_tools import  get_landoflegends_events, get_current_time
 
-# .env dosyasını en başta, bir kere yüklüyoruz.
 load_dotenv()
 model_name = os.getenv("GEMINI_MODEL_NAME")
-# GÜNCELLEME: Araçları global olarak oluşturmuyoruz.
-# Onları sadece ihtiyaç duyulduğunda oluşturacak bir fonksiyon yazıyoruz.
+
 def get_tools():
     """İhtiyaç duyulduğunda araçları oluşturur ve döndürür."""
     tavily_tool = TavilySearch(
         max_results=3, 
-        tavily_api_key = os.getenv("TAVILY_API_KEY") # Anahtarı burada, güvenli bir şekilde okuruz.
+        tavily_api_key = os.getenv("TAVILY_API_KEY") 
     )
-    # Tüm araçları bir listeye koyuyoruz.
-    return [tavily_tool, get_landoflegends_events, get_current_time]
+
+    return [
+        get_current_time, get_landoflegends_events, get_park_units, get_hotel_info,
+        start_ticket_booking, update_ticket_details, finalize_ticket_booking, show_image 
+    ]
 
 
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
+    session_id: str
 
 
 def call_model(state: AgentState):
-    tools = get_tools() # YENİ: Araçları burada, tam ihtiyaç anında alıyoruz.
+    tools = get_tools() 
     llm = init_chat_model(model_name, model_provider="google_genai", temperature=0)
     llm_with_tools = llm.bind_tools(tools)
     response = llm_with_tools.invoke(state["messages"])
@@ -42,7 +47,8 @@ def call_model(state: AgentState):
 
 
 def call_tool(state: AgentState):
-    tools = get_tools() # YENİ: Araçları burada da alıyoruz.
+    print(f"--- ARAÇ ÇAĞIRMA (ID: {state['session_id']}) ---")
+    tools = get_tools()
     tools_by_name = {tool.name: tool for tool in tools}
     
     tool_call_message = next(msg for msg in reversed(state['messages']) if msg.tool_calls)
@@ -50,11 +56,11 @@ def call_tool(state: AgentState):
     
     for tool_call in tool_call_message.tool_calls:
         tool = tools_by_name[tool_call["name"]]
-        
+        tool_call['args']['session_id'] = state['session_id']
         try:
             observation = tool.invoke(tool_call['args'])
             
-            # Başarılı formatlama mantığımızı koruyoruz.
+            
             if isinstance(observation, list):
                 formatted_observation = "İnternet aramasından şu sonuçlar bulundu:\n\n"
                 for i, item in enumerate(observation):
