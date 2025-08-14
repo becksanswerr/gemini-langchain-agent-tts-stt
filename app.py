@@ -5,6 +5,7 @@ load_dotenv()
 
 import streamlit as st
 import uuid
+import base64
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from multiprocessing import freeze_support
 
@@ -12,79 +13,112 @@ from multiprocessing import freeze_support
 from agent_core import app
 from config import SYSTEM_PROMPT
 from database import save_conversation
-# from tts_handler import initialize_tts_engine, generate_and_save_audio # TTS YORUM SATIRI
 
+# YENİ: İki sütunlu ve daha hedefli bir stil için fonksiyon
+def set_page_style():
+    with open("pictures/land_of_legends_banner.png", "rb") as f:
+        img_data = f.read()
+    b64_encoded = base64.b64encode(img_data).decode()
+
+    # CSS stilleri
+    page_style = f"""
+        <style>
+        /* Ana uygulama arka planı */
+        .stApp {{
+            background-color: #0E0017; /* Arka planda resim yerine koyu bir renk */
+        }}
+
+        /* Streamlit'in varsayılan elemanlarını gizle */
+        #MainMenu, footer, header {{
+            visibility: hidden;
+        }}
+
+        /* GÜNCELLEME: Sağdaki sohbet sütununu hedef alıyoruz */
+        /* [data-testid="column"] Streamlit'in sütunları için kullandığı bir etikettir */
+        [data-testid="column"]:nth-of-type(2) > div {{
+            background-color: rgba(10, 5, 20, 0.85); /* Hafif morumsu, yarı saydam siyah */
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 95vh; /* Ekranın yüksekliğine yakın bir yükseklik */
+            overflow-y: auto; /* Mesajlar sığmazsa kaydırma çubuğu çıksın */
+        }}
+        
+        /* Sohbet mesajlarının kendi arka planı */
+        .stChatMessage {{
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+        }}
+        </style>
+    """
+    st.markdown(page_style, unsafe_allow_html=True)
+
+# --- ANA UYGULAMA FONKSİYONU ---
 def main_app():
-    st.set_page_config(page_title="Dynamic AI Agent", layout="wide")
+    st.set_page_config(
+        page_title="Landy", 
+        page_icon="🤖", 
+        layout="wide",
+        initial_sidebar_state="collapsed"
+    )
 
-    # --- ÖNBELLEKLEME (CACHING) - TTS YORUM SATIRI ---
-    # @st.cache_resource
-    # def get_tts_stream():
-    #     return initialize_tts_engine()
-    # tts_stream = get_tts_stream()
+    set_page_style()
 
-    # --- OTURUM (SESSION) YÖNETİMİ ---
+    # --- OTURUM YÖNETİMİ ---
     if "messages" not in st.session_state:
         st.session_state.messages = [
             SystemMessage(content=SYSTEM_PROMPT),
-            AIMessage(content="Merhaba! Size nasıl yardımcı olabilirim?")
+            AIMessage(content="Ben Landy. The Land of Legends'taki dijital asistanınız. Size nasıl yardımcı olabilirim?")
         ]
     if "session_id" not in st.session_state:
         st.session_state.session_id = str(uuid.uuid4())
 
-    st.title("🤖 Dynamic AI Agent")
+    # --- İKİ SÜTUNLU YAPI ---
+    left_col, right_col = st.columns((2, 3)) # Sol sütun daha dar, sağ sütun daha geniş
 
-    # --- MESAJLARI GÖSTERME DÖNGÜSÜ ---
-    # Bu döngü, SADECE kullanıcıya gösterilmesi gereken mesajları filtreler.
-    for message in st.session_state.messages:
-        # Sistem mesajlarını ve içeriği olmayan AI mesajlarını atla
-        if isinstance(message, SystemMessage) or (isinstance(message, AIMessage) and not message.content):
-            continue
-        
-        # Araç mesajlarını özel işle: Sadece resim komutu olanları göster
-        if isinstance(message, ToolMessage):
-            if message.content.startswith("IMAGE_PATH:"):
-                with st.chat_message("assistant"):
-                    image_path = message.content.split(":")[1]
-                    st.image(image_path)
-            continue # Diğer tüm tool mesajlarını atla
+    # --- SOL SÜTUN: GÖRSEL PANEL ---
+    with left_col:
+        st.image("pictures/land_of_legends_banner.png")
+        st.title("🤖 Landy")
+        st.caption("The Land of Legends'a Hoş Geldiniz! Etkinlikler, üniteler, oteller veya biletler hakkında her şeyi bana sorabilirsiniz.")
 
-        # İnsan ve AI mesajlarını göster
-        role = "user" if isinstance(message, HumanMessage) else "assistant"
-        with st.chat_message(role):
-            st.markdown(message.content)
+    # --- SAĞ SÜTUN: SOHBET PANELİ ---
+    with right_col:
+        # Mesajları gösterme
+        for message in st.session_state.messages:
+            if isinstance(message, SystemMessage): continue
             
-    # --- KULLANICI GİRDİSİ VE AJAN ÇALIŞTIRMA MANTIĞI (YENİDEN YAZILDI) ---
-    if prompt := st.chat_input("Mesajınızı buraya yazın..."):
-        # 1. Kullanıcının mesajını geçici olarak geçmişe ekle
+            if isinstance(message, HumanMessage):
+                with st.chat_message("user", avatar="pictures/user_avatar.png"):
+                    st.markdown(message.content)
+            elif isinstance(message, AIMessage):
+                if not message.content: continue
+                with st.chat_message("assistant", avatar="pictures/bot_avatar.png"):
+                    st.markdown(message.content)
+            elif isinstance(message, ToolMessage):
+                if message.content.startswith("IMAGE_PATH:"):
+                    with st.chat_message("assistant", avatar="pictures/bot_avatar.png"):
+                        image_path = message.content.split(":")[1]
+                        st.image(image_path)
+                continue
+
+    # --- KULLANICI GİRDİSİ (Sütunların Dışında, Sayfanın Altında) ---
+    if prompt := st.chat_input("Landy'a bir soru sorun..."):
         st.session_state.messages.append(HumanMessage(content=prompt))
         
-        # 2. Ajanı çalıştır
-        with st.spinner("Düşünüyor..."):
+        with st.spinner("Landy düşünüyor..."):
             inputs = {
                 "messages": st.session_state.messages,
                 "session_id": st.session_state.session_id
             }
             result = app.invoke(inputs)
-            
-            # 3. NİHAİ ÇÖZÜM: Session state'i, ajandan dönen nihai ve doğru
-            #    geçmişle tamamen değiştir. Bu, tüm tekrar sorunlarını çözer.
             st.session_state.messages = result["messages"]
-
-            # 4. Veritabanına kaydet
             save_conversation(st.session_state.session_id, st.session_state.messages)
 
-            # --- TTS YORUM SATIRI ---
-            # final_bot_response = st.session_state.messages[-1]
-            # if isinstance(final_bot_response, AIMessage) and final_bot_response.content:
-            #     audio_path = generate_and_save_audio(tts_stream, final_bot_response.content)
-            #     if audio_path:
-            #         st.session_state.audio_to_play = None # Sesi şimdilik oynatma
-
-        # 5. Her şey bittikten sonra ekranı SADECE BİR KERE yenile
         st.rerun()
 
-# --- ANA UYGULAMA GİRİŞ NOKTASI ---
+# --- ANA GİRİŞ NOKTASI ---
 if __name__ == '__main__':
     freeze_support()
     main_app()
